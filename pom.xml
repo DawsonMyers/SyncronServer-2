@@ -33,7 +33,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>ca.syncron.purgatory.ArduinoConnectorOLD</mainClass>
+							<mainClass>main.java.ca1.syncron.purgatory.ArduinoConnectorOLD</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

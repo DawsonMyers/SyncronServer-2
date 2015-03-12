@@ -227,10 +227,10 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 	public class ArduinoPins {
 		public volatile AnalogPin[]  mAnalogPins;
 		public volatile DigitalPin[] mDigitalPins;
-		Interfaces.PinCallbacks mObserver;
+		PinCallbacks mObserver;
 		Link                    mLink;
 
-		public ArduinoPins(Interfaces.PinCallbacks observer, Link link, int analogPins, int digitalPins) {
+		public ArduinoPins(PinCallbacks observer, Link link, int analogPins, int digitalPins) {
 			for (int i = 0; i < analogPins; i++) {
 				mAnalogPins = new AnalogPin[analogPins];
 				mAnalogPins[i] = new AnalogPin(observer, link);
@@ -243,7 +243,7 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 			}
 		}
 
-		public class AnalogPin implements Interfaces.PinControl {
+		public class AnalogPin implements PinControl {
 			PinCallbacks mObserver;
 			Link         mLink;
 
