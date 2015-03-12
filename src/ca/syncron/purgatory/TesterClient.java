@@ -10,16 +10,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import static ca.syncron.network.message.Message.*;
+import static ca.syncron.network.message.Message.MessageType;
+import static ca.syncron.network.message.Message.UserType;
 
 /**
  * Created by Dawson on 3/7/2015.
  */
-public class TesterClient extends AbstractTcpConnector {
+public class TesterClient extends  AbstractTcpConnector {
 	static              String nameId = TesterClient.class.getSimpleName();
 	public final static Logger log    = LoggerFactory.getLogger(nameId);
 public static TesterClient client;
 	public TesterClient() {
+
 		isServer(false);
 
 		//registerCallbacks(callbacks);
@@ -62,6 +64,7 @@ public static TesterClient client;
 						break;
 					case "reg":
 						Message msg1 = new Message(MessageType.REGISTER, UserType.ANDROID);
+						msg1.setUserName("Dawson");
 						client.sendMessage(msg1);
 						break;
 					case "digital":

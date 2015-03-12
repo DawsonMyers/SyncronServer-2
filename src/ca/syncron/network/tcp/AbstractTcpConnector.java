@@ -1,8 +1,8 @@
 package ca.syncron.network.tcp;
 
+import ca.syncron.controller.AbstractController;
 import ca.syncron.network.message.Handler;
 import ca.syncron.network.message.Message;
-import ca.syncron.network.message.MessageCallbacks;
 import ca.syncron.network.tcp.server.User;
 import ca.syncron.utils.ComConstants;
 import ca.syncron.utils.Constants;
@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ca.syncron.network.message.MessageCallbacks.DispatchCallbacks;
 import static ca.syncron.utils.Constants.Ports;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -38,28 +39,30 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 
 public class AbstractTcpConnector extends Thread implements ServerSocketObserver, ComConstants,
-                                                            SocketObserver, MessageCallbacks.DispatchCallbacks,
+                                                            SocketObserver, DispatchCallbacks,
                                                             Interfaces.PinStatus {
 	static String nameId = AbstractTcpConnector.class.getName();
 	String id = getClass().getSimpleName();
-	public MessageCallbacks.DispatchCallbacks callbacks;
+	public DispatchCallbacks callbacks;
 
 	public static String userName;
 	public final static Logger log = LoggerFactory.getLogger(nameId);
 	public static Handler mHandler;
-	public static volatile Map<String, User>    connectedClients = new HashMap<String, User>();    // new
-	private static         AbstractTcpConnector mInstance        = null;
+	public static volatile Map<String, User>    mUserMap    = new HashMap<String, User>();    // new
+	private static         AbstractTcpConnector me          = null;
+	private static         AbstractController   mController = AbstractController.getInstance();
 	public EventMachine mEventMachine;
 	public List<User>   mUsers;
 	private boolean mIsServer = false;
 	public NIOSocket mSocket;
 	public boolean   mConnected;
-
+	public ArrayList<User.UserBundle> mUserBundles = new ArrayList<>();
+	//public Map<String, User.UserBundle> mUserBundles = new HashMap<>();
 
 	//
 	// ///////////////////////////////////////////////////////////////////////////////////
 	public AbstractTcpConnector() {
-		mInstance = this;
+		me = this;
 		//mEventMachine = machine;
 		mUsers = new ArrayList<User>();
 		mHandler = new Handler(this);
@@ -114,7 +117,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 
 				InetAddress ipAddress = InetAddress.getByName(ip);
 				mSocket = machine.getNIOService().openSocket(ipAddress, port);
-				mSocket.listen(mInstance);
+				mSocket.listen(me);
 				mSocket.setPacketReader(new AsciiLinePacketReader());
 				mSocket.setPacketWriter(new AsciiLinePacketWriter());
 				machine.start();
@@ -130,11 +133,11 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	//
 	// ///////////////////////////////////////////////////////////////////////////////////
 
-	public static AbstractTcpConnector getInstance() {
-		if (mInstance == null) {
-			// mInstance = new ServerTcp();
+	public static AbstractTcpConnector getMe() {
+		if (me == null) {
+			// me = new ServerTcp();
 		}
-		return mInstance;
+		return me;
 
 	}
 
@@ -152,12 +155,17 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	public void newConnection(NIOSocket nioSocket) {
 		// Create a new user to hande the new connection.
 		log.info("New user connected from " + nioSocket.getIp() + ".");
-		mUsers.add(new User(this, nioSocket));
+		User user = new User(this, nioSocket);
+		mUserMap.putIfAbsent(user.getUserId(), user);
+		mUsers.add(user);
+		mUserBundles.add(user.getUserBundle());
 	}
 
 	public void removeUser(User user) {
 		log.info("Removing user " + user + ".");
 		mUsers.remove(user);
+		mUserMap.remove(user.getUserId());
+		mUserBundles.remove(user.getUserBundle());
 	}
 
 	public void broadcast(User sender, String string) {
@@ -181,16 +189,16 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	}
 
 	public void sendToTarget(String targetId, String msgString) {
-		if (connectedClients.containsKey(targetId)) {
-			User target = connectedClients.get(targetId);
+		if (mUserMap.containsKey(targetId)) {
+			User target = mUserMap.get(targetId);
 			target.getSocket().write(msgString.getBytes());
 		}
 	}
 
 	public static User userLookup(String keyFragment) {
-//		for (String key : connectedClients.keySet()) {
-		for (String key : connectedClients.keySet()) {
-			if (key.contains(keyFragment)) return connectedClients.get(key);
+//		for (String key : mUserMap.keySet()) {
+		for (String key : mUserMap.keySet()) {
+			if (key.contains(keyFragment)) return mUserMap.get(key);
 		}
 		return null;
 	}
@@ -250,7 +258,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 		AbstractTcpConnector.userName = userName;
 	}
 
-	public void registerCallbacks(MessageCallbacks.DispatchCallbacks callbacks) {mHandler.register(callbacks);}
+	public void registerCallbacks(DispatchCallbacks callbacks) {mHandler.register(callbacks);}
 
 	@Override
 	public void handleDigitalMessage(Message msg) {
@@ -265,7 +273,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	@Override
 	public void handleChatMessage(Message msg) {
 		log.info("Chat message handled");
-		log.info("handleChatMessage");
+
 	}
 
 	@Override
@@ -305,7 +313,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 
 	@Override
 	public void sendMessage(Message msg) {
-		log.info("handleSendMessage");
+		log.info("sendMessage");
 //		if (mSocket != null) {
 //			mSocket.write(msg.getSerialMessage().getBytes());
 //			log.info("Message sent");
@@ -314,27 +322,27 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 
 	@Override
 	public void sendUpdateMessage(Message msg) {
-		log.info("handleAdminMessage");
+		log.info("handleUpdateMessage");
 	}
 
 	@Override
 	public void sendChatMessage(Message msg) {
-		log.info("handleAdminMessage");
+		log.info("handleChatMessage");
 	}
 
 	@Override
 	public void sendSystemMessage(Message msg) {
-		log.info("handleAdminMessage");
+		log.info("handleSystemMessage");
 	}
 
 	@Override
-	public void sendRegiterMessage(Message msg) {
-		log.info("handleAdminMessage");
+	public void sendRegisterMessage(Message msg) {
+		log.info("handleRegisterMessage");
 	}
 
 	@Override
 	public <T> void processMessage(T msg) {
-		log.info("handleAdminMessage");
+		log.info("processMessage");
 	}
 
 	@Override
@@ -345,11 +353,16 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 
 	@Override
 	public void invalidateAnalog() {
-		log.info("handleAdminMessage");
+		log.info(" invalidateAnalog");
 	}
 
 	@Override
 	public void invalidateDigital() {
-		log.info("handleAdminMessage");
+		log.info("invalidateDigital");
+	}
+	//
+	///////////////////////////////////////////////////////
+	public void invalidateStatus() {
+		log.info("invalidateStatus");
 	}
 }

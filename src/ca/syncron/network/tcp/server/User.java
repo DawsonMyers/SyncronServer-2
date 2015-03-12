@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package ca.syncron.network.tcp.server;
 
@@ -20,34 +20,37 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static java.lang.String.format;
 import static java.lang.System.out;
 
 /**
  * @author Dawson
- *
  */
 // jsonMsg = {message_type: "digital", sender_type:"node",value:"0"}
 public class User implements SocketObserver, ComConstants {
 	public final static  Logger log                = LoggerFactory.getLogger(User.class.getName());
 	private final static long   LOGIN_TIMEOUT      = 30 * 100000;
 	private final static long   INACTIVITY_TIMEOUT = 500 * 60 * 1000;
-	public final  AbstractTcpConnector mServer;
-	private final NIOSocket            m_socket;
-	private       String               m_name;
-	private       DelayedEvent         m_disconnectEvent;
-	public String targetMsg = "EMPTY MESSAGE";
+	private DelayedEvent mDisconnectEvent;
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 	public static MessageProcessor mapper;
-public UserType mType = UserType.ANDROID;
+	public String targetMsg = "EMPTY MESSAGE";
+	//
+	///////////////////////////////////////////////////////
+	public final  AbstractTcpConnector mServer;
+	private final NIOSocket            mSocket;
+	private      String   mName        = "NotSet";
+	public       UserType mType        = UserType.ANDROID;
+	public       String   mUserId      = "NotSet";
+	public final Date     mTimeStamp   = new Date();
+	public       boolean  isRegistered = false;
+	private UserBundle mBundle;
 
-	public void setType(UserType type) {
-		mType = type;
-	}
 
-	public UserType getType() {return mType;}
 
 	class Test extends Thread {
 		public Test() {start();}
@@ -74,19 +77,23 @@ public UserType mType = UserType.ANDROID;
 		getSocket().write(mapper.serializeMessage(msg).getBytes());
 	}
 
+
+
 	public User(AbstractTcpConnector server, NIOSocket socket) {
 		mServer = server;
-		m_socket = socket;
+		mSocket = socket;
 		getSocket().setPacketReader(new AsciiLinePacketReader());
 		getSocket().setPacketWriter(new AsciiLinePacketWriter());
 		getSocket().listen(this);
-		m_name = null;
+		setUserId(getSocketAddress());
+		//mName = null;
+		mBundle = new UserBundle();
 		mapper = new MessageProcessor();
 	}
 
 	public void connectionOpened(NIOSocket nioSocket) {
 
-//		 m_disconnectEvent = mServer.getEventMachine().executeLater(new
+//		 mDisconnectEvent = mServer.getEventMachine().executeLater(new
 //		 Runnable() {
 //		 public void run() {
 //		 getSocket().write("{\"value\":\"2\",\"chatMessage\":\"DISCONNECTED\",\"admin\":true,\"reqResponse\":false,\"messageType\":\"CHAT\"}\n".getBytes());
@@ -94,28 +101,28 @@ public UserType mType = UserType.ANDROID;
 //		 }
 //		 }, LOGIN_TIMEOUT);
 
-		Message msg = new Message( );//Message.MessageType.REGISTER, UserType.ANDROID);
+		Message msg = new Message();//Message.MessageType.REGISTER, UserType.ANDROID);
 		msg.setMessageType(Message.MessageType.REGISTER);
 		msg.setReqResponse(true);
 		//msg.setTargetUser(this);
 		//mServer.mHandler.addToReceiveQueue(msg);
 		String s = mapper.serializeMessage(msg);
 		//msg.serialize();
-		out.println(s);
+		log.info(s);
 		nioSocket.write(s.getBytes());
-		out.println("Req sent to user");
+		log.info("Registration request sent to user at " + getSocketAddress());
 		// nioSocket.write("Please enter your name:".getBytes());
 	}
 
 	public String toString() {
-		return m_name != null ? m_name + "@" + getSocket().getIp() : "anon@" + getSocket().getIp();
+		return mName != null ? mName + "@" + getSocket().getIp() : "anon@" + getSocket().getIp();
 	}
 
 	public void connectionBroken(NIOSocket nioSocket, Exception exception) {
 		// Inform the other users if the user was logged in.
-		if (m_name != null) {
-			out.println( m_name + " left the chat.");
-			//mServer.broadcast(this, m_name + " left the chat.");
+		if (mName != null) {
+			log.info(mName + " left the chat.");
+			//mServer.broadcast(this, mName + " left the chat.");
 		}
 		// Remove the user.
 		mServer.removeUser(this);
@@ -123,37 +130,38 @@ public UserType mType = UserType.ANDROID;
 
 	private void scheduleInactivityEvent() {
 		// Cancel the last disconnect event, schedule another.
-		if (m_name != null && !m_name.contains("node")) {
-			if (m_disconnectEvent != null) m_disconnectEvent.cancel();
-			m_disconnectEvent = mServer.getEventMachine().executeLater(new Runnable() {
+		if (mName != null && !mName.contains("node")) {
+			if (mDisconnectEvent != null) mDisconnectEvent.cancel();
+			mDisconnectEvent = mServer.getEventMachine().executeLater(new Runnable() {
 				public void run() {
 					getSocket().write("{\"messageType\":\"DISCONNECT\"}".getBytes());
 					getSocket().closeAfterWrite();
 				}
 			}, INACTIVITY_TIMEOUT);
-		} 
-		
+		}
 
-			if (m_disconnectEvent != null  && m_name != null && m_name.length() > 0 & m_name.contains("node")) m_disconnectEvent.cancel();
-		
+
+		if (mDisconnectEvent != null && mName != null && mName.length() > 0 & mName.contains("node")) mDisconnectEvent.cancel();
+
 	}
 
 	// Received
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public void packetReceived(NIOSocket socket, byte[] packet) {
-
-		mServer.packetReceived(this,packet);
+out.println("");
+		mServer.packetReceived(this, packet);
 	}
+
 	public void packetSent(NIOSocket socket, Object tag) {
-		mServer.packetSent(socket,tag);
+		mServer.packetSent(socket, tag);
 	}
 
 	public void sendBroadcast(byte[] bytesToSend) {
 		// Only send broadcast to users logged in.
-	//	if (m_name != null) {
-			getSocket().write(bytesToSend);
-	//	}
+		//	if (mName != null) {
+		getSocket().write(bytesToSend);
+		//	}
 	}
 
 	public void sendToTarget(byte[] bytesToSend, User target) {
@@ -164,39 +172,98 @@ public UserType mType = UserType.ANDROID;
 	}
 
 	public void sendToTarget(String targetId, String msgString) {
-		if (mServer.connectedClients.containsKey(targetId)) {
-			User target = mServer.connectedClients.get(targetId);
+		if (mServer.mUserMap.containsKey(targetId)) {
+			User target = mServer.mUserMap.get(targetId);
 			target.getSocket().write(msgString.getBytes());
-			out.println("sending relay to " + targetId);
+			log.info("sending relay to " + targetId);
 		}
 	}
 
 	public void sendMessage(String msgString) {
 		getSocket().write(msgString.getBytes());
 	}
-	
 
+
+//  Getter/Setter
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public String getSocketAddress() {
+		return getSocket().getIp() + ":" + getSocket().getPort();
+	}
+
+	public String getUserId() {
+		return mUserId;
+	}
+
+	public void setUserId(String userId) {
+		mUserId = userId;
+	}
+
+	public Date getTimeStamp() {
+		return mTimeStamp;
+	}
+
+
+	public void setType(UserType type) {
+		mType = type;
+	}
+
+	public UserType getType() {return mType;}
 	/**
-	 * @return object m_socket of type NIOSocket
+	 * @return object mSocket of type NIOSocket
 	 */
 	public NIOSocket getSocket() {
-		return m_socket;
+		return mSocket;
 	}
 
 
 	/**
-	 * @return object m_name of type String
+	 * @return object mName of type String
 	 */
 	public String getName() {
-		return this.m_name ;
+		return this.mName;
 	}
 
 	/**
-	 * @param m_name
-	 *             the m_name to set
+	 * @param m_name the mName to set
 	 */
 	public void setName(String m_name) {
-		this.m_name = this.m_name + "@" + m_socket.getAddress();;
+		this.mName = m_name;
+
+		setUserId( m_name + "@" + mSocket.getAddress().toString().replace("/", ""));
+	}
+	public void setRegistered(boolean isRegistered) {
+		this.isRegistered = isRegistered;
 	}
 
+	public boolean isRegistered() {
+		return isRegistered;
+	}
+
+	public void register(Message msg) {
+		setName(msg.getUserName());
+		setType(msg.getUserType());
+		setRegistered(true);
+		log.info("User: " + getName() + format("({})", getType().toString()) + " has registered");
+	}
+	//
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public class UserBundle {
+		public String   name   = "NotSet";
+		public UserType type   = UserType.ANDROID;
+		public String   userId = "NotSet";
+		public Date timeStamp;// = new Date();
+
+		UserBundle() {
+			name = mName;
+			type = mType;
+			userId = mUserId;
+			timeStamp = mTimeStamp;
+		}
+	}
+
+	public UserBundle getUserBundle() {
+		return mBundle;
+	}
 }

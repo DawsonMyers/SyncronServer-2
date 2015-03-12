@@ -11,9 +11,11 @@ import java.io.IOException;
  * Created by Dawson on 3/7/2015.
  */
 public class Server extends AbstractTcpConnector {
-
-
+public static Server me;
+ServerController mController= ServerController.getInstance();
+	public static Server getInstance() {return me;}
 	public Server() {
+		me = this;
 		isServer(true);
 	//	initCallbacks();
 		//registerCallbacks(callbacks);
@@ -60,6 +62,7 @@ public class Server extends AbstractTcpConnector {
 	public void sendNodeMessage(Message msg) {
 		for (User user : mUsers) {
 			if (user.getType() == Message.UserType.NODE) {
+				log.info("ClientController - mArduino.setPin({},{})",msg.getPin(),msg.getValue());
 				user.getSocket().write(msg.serializeMessage().getBytes());
 			}else log.error("NO NODES CONNECTED - MSG NOT SENT");
 		}
@@ -68,6 +71,7 @@ public class Server extends AbstractTcpConnector {
 	@Override
 	public void handleDigitalMessage(Message msg) {
 		log.info("handleDigitalMessage");
+
 		sendNodeMessage(msg);
 	}
 
@@ -79,6 +83,7 @@ public class Server extends AbstractTcpConnector {
 		log.info("handleChatMessage");
 		//if (msg.getSerialMessage().startsWith("{")) msg.setSerialMessage(msg.serializeMessage());
 		msg.setSerialMessage(msg.serializeMessage());
+		log.info("[CHAT] " + msg.getUser() + ": " + msg.getChatMessage());
                      broadcast(msg.getUser(), msg.getSerialMessage());
 	}
 
@@ -95,8 +100,11 @@ public class Server extends AbstractTcpConnector {
 		log.info("handleRegisterMessage");
 		try {
 			User user = msg.getUser();
-			user.setType(msg.getUserType());
-			user.setName(msg.getUserId());
+			user.register(msg);
+			mUserBundles.add(user.getUserBundle());
+			log.info("User: " + msg.getUserName() + " has registered");
+//			user.setType(msg.getUserType());
+//			user.setName(msg.getUserId());
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -122,5 +130,14 @@ public class Server extends AbstractTcpConnector {
 	@Override
 	public <T> void processMessage(T msg) { }
 
+	@Override
+	public void invalidateStatus() {
+		super.invalidateStatus();
+		Message msg = new Message();
+		msg.status(msg);
+		msg.setAnalogValues(mController.getAnalog());
+		msg.setDigitalValues(mController.getDigital());
+		msg.setUserBundles(mUserBundles);
+	}
 }
 

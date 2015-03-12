@@ -4,6 +4,7 @@ import ca.syncron.boards.ArduinoConnector;
 import ca.syncron.controller.AbstractController;
 import ca.syncron.network.message.Message;
 import ca.syncron.utils.Interfaces.*;
+import ca.syncron.utils.TestInput;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,8 @@ public class ClientController extends AbstractController implements Runnable, Pi
 
 	public ClientController() {
 		me = this;
-
+		setUserName("Dawson");
+		setUserType(NODE);
 	}
 
 	public static ClientController getInstance() {
@@ -38,6 +40,7 @@ public class ClientController extends AbstractController implements Runnable, Pi
 	public static void main(String[] args) {
 		//(mArduino = new ArduinoConnector(me)).start();
 		(mClient = new Client(me)).start();
+		TestInput.input();
 	}
 
 	//  run()
@@ -66,7 +69,8 @@ public class ClientController extends AbstractController implements Runnable, Pi
 
 	@Override
 	public void setPin(int pin, int state) {
-
+		//mArduino.setPin(pin,state);
+		log.info("ClientController - mArduino.setPin({},{})",pin,state);
 	}
 
 	@Override

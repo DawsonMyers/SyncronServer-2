@@ -77,6 +77,10 @@ public class Client extends AbstractTcpConnector {
 	@Override
 	public void handleRegisterMessage(Message msg) {
 		super.handleRegisterMessage(msg);
+		msg.register(false);
+		msg.setUserName(mController.getUserName());
+		msg.setUserType(mController.getUserType());
+		mHandler.addToSendQueue(msg);
 	}
 
 	@Override
@@ -104,11 +108,12 @@ public class Client extends AbstractTcpConnector {
 	@Override
 	public void sendMessage(Message msg) {
 		super.sendMessage(msg);
-		log.info("handleSendMessage");
+
 		if (mSocket != null) {
 			if (msg.getSerialMessage() == null) {
-				log.error("sendMessage:: serial message empty");
-				return;
+				msg.serializeMessage();
+				log.error("sendMessage:: serializing msg to send");
+				//return;
 			}
 			mSocket.write(msg.getSerialMessage().getBytes());
 			log.info("Message sent");
@@ -135,7 +140,7 @@ public class Client extends AbstractTcpConnector {
 	}
 
 	@Override
-	public void sendRegiterMessage(Message msg) {
+	public void sendRegisterMessage(Message msg) {
 
 	}
 

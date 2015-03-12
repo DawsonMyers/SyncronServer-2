@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -31,11 +32,15 @@ public class Message {
 	@JsonIgnore
 	public MessageProcessor mapper;
 
-	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR;}
+	public void setUserBundles(ArrayList<User.UserBundle> userBundles) {
+		mUserBundles = userBundles;
+	}
 
-	public enum UserType {NODE, SERVER, ANDROID;}
+	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN;}
 
-	public enum Chat {REGISTER, UPDATE, LOGIN, USERS, DISCONNECT;}
+	public enum UserType {NODE, SERVER, ANDROID, UNKNOWN;}
+
+	public enum Chat {REGISTER, UPDATE, LOGIN, USERS, DISCONNECT, UNKNOWN;}
 
 	@JsonIgnore
 	User mUser;
@@ -202,20 +207,24 @@ public class Message {
 	@JsonIgnore
 	public void status(Message m) {setMessageType(MessageType.STATUS);}
 
-	MessageType mMessageType;
-	String      mUserId;
-	UserType    mUserType;
-	UserType    mSenderType;
-	String      mSenderId;
-	UserType    mTargetType;
-	String      mTargetId;
-	String      mChatMessage;
-	String      mLogin;
-	String      mAdminId;
-	Chat        mChatType;
-	String      mPin;
-	String      mValue;
-	String      mTestString;
+	//
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	MessageType                mMessageType;
+	String                     mUserId;
+	UserType                   mUserType;
+	UserType                   mSenderType;
+	String                     mSenderId;
+	UserType                   mTargetType;
+	String                     mTargetId;
+	String                     mChatMessage;
+	String                     mLogin;
+	String                     mAdminId;
+	Chat                       mChatType;
+	String                     mPin;
+	String                     mValue;
+	String                     mTestString;
+	String                     mUserName;
+	ArrayList<User.UserBundle> mUserBundles;
 
 
 	String[] tags;
@@ -254,6 +263,7 @@ public class Message {
 	public String getPin() {
 		return this.mPin;
 	}
+
 	@JsonIgnore
 	public int getPinAsInt() {
 		return Integer.parseInt(this.mPin);
@@ -272,6 +282,7 @@ public class Message {
 	public String getValue() {
 		return this.mValue;
 	}
+
 	@JsonIgnore
 	public int getValueAsInt() {
 		return Integer.parseInt(this.mValue);
@@ -543,4 +554,14 @@ public class Message {
 	public void setTags(String[] tags) {
 		this.tags = tags;
 	}
+
+	public String getUserName() {
+		return mUserName;
+	}
+
+	public void setUserName(String userName) {
+		mUserName = userName;
+	}
+
+
 }

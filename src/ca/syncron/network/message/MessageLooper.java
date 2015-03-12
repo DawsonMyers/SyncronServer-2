@@ -24,11 +24,12 @@ public class MessageLooper {
 	DispatchCallbacks mObserver = null;
 
 	MessageLooper me;
-	ExecutorService              executor      = Executors.newCachedThreadPool();
+	ExecutorService              executor      = Executors.newFixedThreadPool(2);
 	LinkedBlockingQueue<Message> mReceiveQueue = new LinkedBlockingQueue<>();
 	LinkedBlockingQueue<Message> mSendQueue    = new LinkedBlockingQueue<>();
 	public LinkedList<Message> mLinkedList;
 	Mode mMode = Mode.RECEIVER;
+	private volatile boolean looperStarted = false;
 
 	public enum Mode {
 		RECEIVER, SENDER;
@@ -41,23 +42,25 @@ public class MessageLooper {
 		startLooper();
 	}
 
-	public MessageLooper(DispatchCallbacks observer ) {
+	public MessageLooper(DispatchCallbacks observer) {
 		this();
 		mObserver = observer;
 		//mMode = mode;
 	}
-public void register(DispatchCallbacks observer) {mObserver = observer;}
+
+	public void register(DispatchCallbacks observer) {mObserver = observer;}
 
 	public synchronized void addToReceiveQue(Message msg) {
+		//out.println("");
 		log.info("addToReceiveQue");
 		mReceiveQueue.add(msg);
 		log.info("ReceiverQue", "Message added to queue");
 	}
 
 	public synchronized void addToSendQue(Message msg) {
-		mReceiveQueue.add(msg);
+		mSendQueue.add(msg);
 		log.info("\"SendQue\", \"Message added to queue\"");
-		log.info("SendQue", "Message added to queue");
+
 	}
 
 	public synchronized Message nextFromQue() {
@@ -71,34 +74,38 @@ public void register(DispatchCallbacks observer) {mObserver = observer;}
 	}
 
 	void startLooper() {
-		executor.execute(() -> {
-			log.info("ReceiverQue", "Receiving queue started");
-			//log.info("\"ReceiverQue\", \"Receiving queue started\"");
-			while (true) {
-				try {
-					dispatchReceiveMessage(mReceiveQueue.take());
-					log.info("ReceiverQue, message taken from Receiving queue ");
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+		if (!looperStarted){
+		looperStarted = true;
+			executor.execute(() -> {
+				log.info("ReceiverQue", "Receiving queue started");
+				looperStarted = true;
+				//log.info("\"ReceiverQue\", \"Receiving queue started\"");
+				while (true) {
+					try {
+						dispatchReceiveMessage(mReceiveQueue.take());
+//					log.info("ReceiverQue, message taken from Receiving queue ");
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
-		executor.execute(() -> {
-			log.info("\"SenderQue\", \"Sender queue started\"");
-			log.info("SenderQue", "Sender queue started");
-			while (true) {
-				try {
-					dispatchReceiveMessage(mSendQueue.take());
-					log.info("Removed received message from queue");
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+			});
+			executor.execute(() -> {
+				log.info("\"SenderQue\", \"Sender queue started\"");
+				log.info("SenderQue", "Sender queue started");
+				while (true) {
+					try {
+						dispatchSendMessage(mSendQueue.take());
+						//log.info("SendQue, message taken from send queue");
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
-	public void dispatchReceiveMessage(Message msg) {
-		log.debug("dispatchReceiveMessage", "Dispatching message");
+	public synchronized void dispatchReceiveMessage(Message msg) {
+		//log.debug("dispatchReceiveMessage", "Dispatching message");
 		log.info("\"dispatchReceiveMessage\", \"Dispatching message\"");
 	//	executor.execute(() -> {
 			MessageType type = msg.getMessageType();
@@ -141,7 +148,7 @@ public void register(DispatchCallbacks observer) {mObserver = observer;}
 	}
 
 	public void dispatchSendMessage(Message msg) {
-		mObserver.sendMessage(msg);
 		log.debug("dispatchSendMessage", "Dispatching message");
+		mObserver.sendMessage(msg);
 	}
 }

@@ -106,7 +106,7 @@ mapper = new MessageProcessor();
 	}
 
 	@Override
-	public void sendRegiterMessage(Message msg) {
+	public void sendRegisterMessage(Message msg) {
 
 	}
 

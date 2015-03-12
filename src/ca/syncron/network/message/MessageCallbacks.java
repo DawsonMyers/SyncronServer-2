@@ -53,7 +53,7 @@ public interface MessageCallbacks {
 		public abstract void sendUpdateMessage(Message msg);
 		public abstract void sendChatMessage(Message msg);
 		public abstract void sendSystemMessage(Message msg);
-		public abstract void sendRegiterMessage(Message msg);
+		public abstract void sendRegisterMessage(Message msg);
 
 		<T> void processMessage(T msg);
 	}

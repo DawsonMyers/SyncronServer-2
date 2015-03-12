@@ -51,4 +51,7 @@ public interface Interfaces {
 		void invalidateAnalog();
 		void invalidateDigital();
 	}
+//	interface StatusCallbacks{
+//		void userConnected()
+//	}
 }
