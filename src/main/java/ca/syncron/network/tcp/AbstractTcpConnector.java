@@ -4,6 +4,7 @@ import ca.syncron.controller.AbstractController;
 import ca.syncron.network.message.Handler;
 import ca.syncron.network.message.Message;
 import ca.syncron.network.tcp.server.User;
+import ca.syncron.network.tcp.server.UserBundle;
 import ca.syncron.utils.ComConstants;
 import ca.syncron.utils.Constants;
 import ca.syncron.utils.Interfaces;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 import static ca.syncron.network.message.MessageCallbacks.DispatchCallbacks;
 import static ca.syncron.utils.Constants.Ports;
+import static java.lang.System.out;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 /**
@@ -56,7 +58,16 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	private boolean mIsServer = false;
 	public NIOSocket mSocket;
 	public boolean   mConnected;
-	public ArrayList<User.UserBundle> mUserBundles = new ArrayList<>();
+
+	public ArrayList<UserBundle> getUserBundles() {
+		return mUserBundles;
+	}
+
+	public void setUserBundles(ArrayList<UserBundle> userBundles) {
+		mUserBundles = userBundles;
+	}
+
+	public ArrayList<UserBundle> mUserBundles = new ArrayList<>();
 	//public Map<String, User.UserBundle> mUserBundles = new HashMap<>();
 
 	//
@@ -158,14 +169,16 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 		User user = new User(this, nioSocket);
 		mUserMap.putIfAbsent(user.getUserId(), user);
 		mUsers.add(user);
-		mUserBundles.add(user.getUserBundle());
+		mController.getUserBundles().add(user.getUserBundle());
+		//mUsers.add(user);
+
 	}
 
 	public void removeUser(User user) {
 		log.info("Removing user " + user + ".");
 		mUsers.remove(user);
 		mUserMap.remove(user.getUserId());
-		mUserBundles.remove(user.getUserBundle());
+		mController.getUserBundles().remove(user.getUserBundle());
 	}
 
 	public void broadcast(User sender, String string) {
@@ -175,10 +188,12 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 			if (user != sender) user.sendBroadcast(bytesToSend);
 		}
 	}
+
 	public void broadcast(Message msg) {
 		// We convert the packet, then send it to all users except the sender.
 		byte[] bytesToSend = msg.serializeMessage().getBytes();
-		User sender = msg.getUser();
+		User sender = msg.getMessageType() == Message.MessageType.STATUS ? new User() : msg.getUser();
+
 		for (User user : mUsers) {
 			if (user != sender) user.sendBroadcast(bytesToSend);
 		}
@@ -227,8 +242,8 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 
 	@Override
 	public void packetReceived(NIOSocket socket, byte[] packet) {
+		out.println("");
 		log.info("Packet received");
-
 		mHandler.addToReceiveQueue(new String(packet));
 
 	}
@@ -288,22 +303,22 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 
 	@Override
 	public void handleRegisterMessage(Message msg) {
-		log.info("handleAdminMessage");
+		log.info("handleRegisterMessage");
 	}
 
 	@Override
 	public void handleStatusMessage(Message msg) {
-		log.info("handleAdminMessage");
+		log.info("handleStatusMessage");
 	}
 
 	@Override
 	public void handleLoginMessage(Message msg) {
-		log.info("handleAdminMessage");
+		log.info("handleLoginMessage");
 	}
 
 	@Override
 	public void handleUserMessage(Message msg) {
-		log.info("handleAdminMessage");
+		log.info("handleUserMessage");
 	}
 
 	@Override
@@ -360,6 +375,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	public void invalidateDigital() {
 		log.info("invalidateDigital");
 	}
+
 	//
 	///////////////////////////////////////////////////////
 	public void invalidateStatus() {

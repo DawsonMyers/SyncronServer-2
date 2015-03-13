@@ -54,4 +54,7 @@ public class Constants {
 			port = p;
 		}
 	}
+
+	public enum Access {GUEST, USER, ELEVATED, ADMIN;}
+
 }

@@ -39,7 +39,7 @@ mapper = new MessageProcessor();
 				//log.info(msg);
 				return;
 			}
-			log.info(msgString);
+			//log.info(mapper.smsgString);
 			msg = mapper.deserializeMessage(msgString);
 			//msg = executor.submit(() -> mapper.deserializeMessage(msgString)).get();
 			if (msg != null && msg.getMessageType() != null) {

@@ -4,6 +4,7 @@
 package ca.syncron.network.message;
 
 import ca.syncron.network.tcp.server.User;
+import ca.syncron.network.tcp.server.UserBundle;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -32,11 +33,9 @@ public class Message {
 	@JsonIgnore
 	public MessageProcessor mapper;
 
-	public void setUserBundles(ArrayList<User.UserBundle> userBundles) {
-		mUserBundles = userBundles;
-	}
 
-	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN;}
+
+	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN, Access;}
 
 	public enum UserType {NODE, SERVER, ANDROID, UNKNOWN;}
 
@@ -116,12 +115,13 @@ public class Message {
 		//mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		String s = "";
 		try {
+		//	mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 			mapper.writeValue(writer, this);
 			s = writer.toString();
 			log.info("serializeMessage");
 			setSerialMessage(s);
 			//log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(msg));
-			//System.log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(msg));
+			  log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this));
 		} catch (IOException e) {
 			e.printStackTrace();
 
@@ -209,22 +209,22 @@ public class Message {
 
 	//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-	MessageType                mMessageType;
-	String                     mUserId;
-	UserType                   mUserType;
-	UserType                   mSenderType;
-	String                     mSenderId;
-	UserType                   mTargetType;
-	String                     mTargetId;
-	String                     mChatMessage;
-	String                     mLogin;
-	String                     mAdminId;
-	Chat                       mChatType;
-	String                     mPin;
-	String                     mValue;
-	String                     mTestString;
-	String                     mUserName;
-	ArrayList<User.UserBundle> mUserBundles;
+	MessageType           mMessageType;
+	String                mUserId;
+	UserType              mUserType;
+	UserType              mSenderType;
+	String                mSenderId;
+	UserType              mTargetType;
+	String                mTargetId;
+	String                mChatMessage;
+	String                mLogin;
+	String                mAdminId;
+	Chat                  mChatType;
+	String                mPin;
+	String                mValue;
+	String                mTestString;
+	String                mUserName;
+	ArrayList<UserBundle> mUserBundles;
 
 
 	String[] tags;
@@ -242,6 +242,13 @@ public class Message {
 
 
 	//////////////////////////////////////////////////////////////////
+	public void setUserBundles(ArrayList<UserBundle> userBundles) {
+		mUserBundles = userBundles;
+	}
+
+	public ArrayList<UserBundle> getUserBundles() {
+		return mUserBundles;
+	}
 
 	/**
 	 * @return object messageType of type MessageType

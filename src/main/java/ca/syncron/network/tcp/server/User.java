@@ -9,6 +9,7 @@ import ca.syncron.network.message.Message.UserType;
 import ca.syncron.network.message.MessageProcessor;
 import ca.syncron.network.tcp.AbstractTcpConnector;
 import ca.syncron.utils.ComConstants;
+import ca.syncron.utils.Constants.Access;
 import naga.NIOSocket;
 import naga.SocketObserver;
 import naga.eventmachine.DelayedEvent;
@@ -35,21 +36,23 @@ public class User implements SocketObserver, ComConstants {
 	public final static  Logger log                = LoggerFactory.getLogger(User.class.getName());
 	private final static long   LOGIN_TIMEOUT      = 30 * 100000;
 	private final static long   INACTIVITY_TIMEOUT = 500 * 60 * 1000;
+
+
+	private Access       mAccessLevel = Access.USER;
 	private DelayedEvent mDisconnectEvent;
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 	public static MessageProcessor mapper;
-	public String targetMsg = "EMPTY MESSAGE";
+	public       String               targetMsg    = "EMPTY MESSAGE";
 	//
 	///////////////////////////////////////////////////////
-	public final  AbstractTcpConnector mServer;
-	private final NIOSocket            mSocket;
-	private      String   mName        = "NotSet";
-	public       UserType mType        = UserType.ANDROID;
-	public       String   mUserId      = "NotSet";
-	public final Date     mTimeStamp   = new Date();
-	public       boolean  isRegistered = false;
+	public       AbstractTcpConnector mServer      = null;
+	private      NIOSocket            mSocket      = null;
+	private      String               mName        = "NotSet";
+	public       UserType             mType        = UserType.ANDROID;
+	public       String               mUserId      = "NotSet";
+	public final Date                 mTimeStamp   = new Date();
+	public       boolean              isRegistered = false;
 	private UserBundle mBundle;
-
 
 
 	class Test extends Thread {
@@ -77,7 +80,7 @@ public class User implements SocketObserver, ComConstants {
 		getSocket().write(mapper.serializeMessage(msg).getBytes());
 	}
 
-
+	public User() {}
 
 	public User(AbstractTcpConnector server, NIOSocket socket) {
 		mServer = server;
@@ -120,12 +123,13 @@ public class User implements SocketObserver, ComConstants {
 
 	public void connectionBroken(NIOSocket nioSocket, Exception exception) {
 		// Inform the other users if the user was logged in.
-		if (mName != null) {
-			log.info(mName + " left the chat.");
-			//mServer.broadcast(this, mName + " left the chat.");
-		}
+//		if (mName != null) {
+//			log.info(mName + " left the chat.");
+//			//mServer.broadcast(this, mName + " left the chat.");
+//		}
 		// Remove the user.
-		mServer.removeUser(this);
+		unregister();
+
 	}
 
 	private void scheduleInactivityEvent() {
@@ -149,7 +153,7 @@ public class User implements SocketObserver, ComConstants {
 	// ///////////////////////////////////////////////////////////////////////////////////
 
 	public void packetReceived(NIOSocket socket, byte[] packet) {
-out.println("");
+		out.println("");
 		mServer.packetReceived(this, packet);
 	}
 
@@ -209,6 +213,7 @@ out.println("");
 	}
 
 	public UserType getType() {return mType;}
+
 	/**
 	 * @return object mSocket of type NIOSocket
 	 */
@@ -230,8 +235,9 @@ out.println("");
 	public void setName(String m_name) {
 		this.mName = m_name;
 
-		setUserId( m_name + "@" + mSocket.getAddress().toString().replace("/", ""));
+		setUserId(m_name + "@" + mSocket.getAddress().toString().replace("/", ""));
 	}
+
 	public void setRegistered(boolean isRegistered) {
 		this.isRegistered = isRegistered;
 	}
@@ -243,27 +249,37 @@ out.println("");
 	public void register(Message msg) {
 		setName(msg.getUserName());
 		setType(msg.getUserType());
+		mBundle.init(this);
 		setRegistered(true);
-		log.info("User: " + getName() + format("({})", getType().toString()) + " has registered");
+		log.info("User: " + getName() + format("{}", getType().toString()) + " has registered");
 	}
+	public void unregister() {
+
+		setRegistered(false);
+		mServer.getUserBundles().remove(getUserBundle());
+		mServer.removeUser(this);
+		log.info("User: " + getName() + format("{}", getType().toString()) + " has disconnected");
+		mServer.invalidateStatus();
+	}
+
+
+	public Access getAccessLevel() {
+		return mAccessLevel;
+	}
+
+	public void setAccessLevel(Access accessLevel) {
+		mAccessLevel = accessLevel;
+	}
+
 	//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public class UserBundle {
-		public String   name   = "NotSet";
-		public UserType type   = UserType.ANDROID;
-		public String   userId = "NotSet";
-		public Date timeStamp;// = new Date();
-
-		UserBundle() {
-			name = mName;
-			type = mType;
-			userId = mUserId;
-			timeStamp = mTimeStamp;
-		}
-	}
-
 	public UserBundle getUserBundle() {
+
 		return mBundle;
+
 	}
+
 }
+
+
+

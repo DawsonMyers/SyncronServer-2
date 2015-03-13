@@ -101,10 +101,11 @@ ServerController mController= ServerController.getInstance();
 		try {
 			User user = msg.getUser();
 			user.register(msg);
-			mUserBundles.add(user.getUserBundle());
+			//getUserBundles().add(user.getUserBundle());
 			log.info("User: " + msg.getUserName() + " has registered");
 //			user.setType(msg.getUserType());
 //			user.setName(msg.getUserId());
+			invalidateStatus();
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -137,7 +138,8 @@ ServerController mController= ServerController.getInstance();
 		msg.status(msg);
 		msg.setAnalogValues(mController.getAnalog());
 		msg.setDigitalValues(mController.getDigital());
-		msg.setUserBundles(mUserBundles);
+		msg.setUserBundles(mController.getUserBundles());
+		broadcast(msg );
 	}
 }
 

@@ -86,6 +86,8 @@ public class Client extends AbstractTcpConnector {
 	@Override
 	public void handleStatusMessage(Message msg) {
 		super.handleStatusMessage(msg);
+		mController.updateStatus(msg);
+
 	}
 
 	@Override

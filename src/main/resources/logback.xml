@@ -2,7 +2,7 @@
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<withJansi>true</withJansi>
 		<encoder>
-			<pattern>[%40(%date{HH:mm:ss.SSS}][%.8thread] %highlight(%-7 ([%level]) ))  [%magenta(%.20logger{15}::%M#%L]) - %-6(%boldGreen(%msg)) %n</pattern>
+			<pattern>[%-30(%date{HH:mm:ss.SSS}][%-7.10([%thread]) %highlight(%-7([%level]) ))  [%magenta(%-30.30(%logger{15}::%M][#%L])) - %-40(%boldGreen(%msg)) %n</pattern>
 			<!--<pattern>%-30(%d{HH:mm:ss.SSS} [%thread])  %-5level %logger{36} - %msg%n</pattern>-->
 		</encoder>
 	</appender>

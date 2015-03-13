@@ -53,7 +53,7 @@ public class MessageProcessor {
 			mapper.writeValue(writer, msg);
 			log.info("serializeMessage");
 			//log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(msg));
-			//System.log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(msg));
+			  log.info("\n"+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(msg));
 		} catch (IOException e) {
 			e.printStackTrace();
 
@@ -66,8 +66,10 @@ public class MessageProcessor {
 		try {
 			StringWriter	writer = new StringWriter();
 			ObjectMapper	mapper = new ObjectMapper();
-			setFormat(true);
-			log.info("deserializeMessage");
+			//setFormat(true);
+			//out.println(mapper.writeValueAsString(msgString));
+
+			log.debug("deserializeMessage");
 			msg = mapper.readValue(msgString, Message.class);
 		} catch (IOException e) {
 			e.printStackTrace();
