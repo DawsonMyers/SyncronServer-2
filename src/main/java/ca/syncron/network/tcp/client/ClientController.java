@@ -3,6 +3,7 @@ package ca.syncron.network.tcp.client;
 import ca.syncron.boards.ArduinoConnector;
 import ca.syncron.controller.AbstractController;
 import ca.syncron.network.message.Message;
+import ca.syncron.network.tcp.AppRegistrar;
 import ca.syncron.utils.Interfaces.*;
 import ca.syncron.utils.TestInput;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -22,10 +23,12 @@ public class ClientController extends AbstractController implements Runnable, Pi
 	public static ArduinoConnector mArduino;
 	public static ClientController me = new ClientController();
 
+	public static String getNameId() {return nameId;}
 	//  Constructors
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public ClientController() {
+		AppRegistrar.register(this);
 		me = this;
 		setUserName("Dawson");
 		setUserType(NODE);

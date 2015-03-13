@@ -2,6 +2,7 @@ package ca.syncron.network.tcp.client;
 
 import ca.syncron.network.message.Message;
 import ca.syncron.network.tcp.AbstractTcpConnector;
+import ca.syncron.network.tcp.AppRegistrar;
 import naga.NIOSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,11 @@ public class Client extends AbstractTcpConnector {
 	public final static Logger log    = LoggerFactory.getLogger(nameId);
 	public static ClientController mController;
 
+	public Client() { }
+
 	public Client(ClientController controller) {
+		this();
+		AppRegistrar.register(this);
 		mController = controller;
 		isServer(false);
 		//registerCallbacks(callbacks);
@@ -146,4 +151,5 @@ public class Client extends AbstractTcpConnector {
 
 	}
 
+	public static String getNameId() {return nameId;}
 }

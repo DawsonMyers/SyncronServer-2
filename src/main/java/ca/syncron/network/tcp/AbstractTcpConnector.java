@@ -54,10 +54,21 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	private static         AbstractTcpConnector me          = null;
 	private static         AbstractController   mController = AbstractController.getInstance();
 	public EventMachine mEventMachine;
-	public List<User>   mUsers;
+	NIOServerSocket mServerSocket;
+	public List<User> mUsers;
 	private boolean mIsServer = false;
 	public NIOSocket mSocket;
 	public boolean   mConnected;
+
+	public boolean isReconnecting() {
+		return reconnecting;
+	}
+
+	public void setReconnecting(boolean reconnecting) {
+		this.reconnecting = reconnecting;
+	}
+
+	private boolean reconnecting;
 
 	public ArrayList<UserBundle> getUserBundles() {
 		return mUserBundles;
@@ -79,6 +90,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 		mHandler = new Handler(this);
 		mHandler.start();
 	}
+
 
 	public AbstractTcpConnector(boolean asServer) {
 		this();
@@ -112,6 +124,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 				EventMachine machine = new EventMachine();
 				mEventMachine = machine;
 				NIOServerSocket socket = machine.getNIOService().openServerSocket(port);
+				mServerSocket = socket;
 				socket.listen(this);
 				//mSocket.listen(new Server(machine));
 				socket.setConnectionAcceptor(ConnectionAcceptor.ALLOW);
@@ -134,6 +147,88 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 				machine.start();
 				if (mSocket.isOpen()) mConnected = true;
 				//if(isScheduled && mSocket.isOpen()) scheduler.shutdown();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+	}
+
+
+	public synchronized void reconnect() {
+		reconnecting = true;
+		int count = 0;
+		int index = 0;
+		int port = Ports.getTcp();
+		//	isServer(true);
+		if (isServer()) {
+
+			// Server
+//			if (mEventMachine != null) {
+//				mEventMachine.stop();
+//			} else try {
+//				mEventMachine = new EventMachine();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//
+
+			try {
+				Thread.sleep(1000);
+
+				log.error("Attempting to connect a new server instance");
+				while (!isConnected()) {
+					count++;
+					index++;
+					connect();
+					if (index >= 3) {
+						log.error("Connection attempts: " + count);
+						index = 0;
+					}
+					Thread.sleep(5000);
+					if (mServerSocket.isOpen()) isConnected(true); mConnected = true;
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+			}
+
+		} else {    //  Client
+			String ip = Constants.IpAddresses.IP;
+			try {
+				EventMachine machine = mEventMachine;
+				InetAddress ipAddress = InetAddress.getByName(ip);
+//
+
+				log.error("Attempting to reconnect to server");
+				while (!isConnected()) {
+					count++;
+					if (mSocket.isOpen()) break;
+
+					try {
+//
+						connect();
+						//log.error("Connection attempts: " + count);
+
+						//if (count % 3 == 0) log.error("Connection attempts: " + count);
+
+						index++;
+						connect();
+						if (index >= 3) {
+							log.error("Connection attempts: " + count);
+							index = 0;
+						}
+						Thread.sleep(5000);
+
+						if (mSocket.isOpen()) mConnected = true;
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} //catch (UnknownHostException e) {
+//						e.printStackTrace();
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -224,6 +319,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	public void connectionOpened(NIOSocket nioSocket) {
 		mSocket = nioSocket;
 		isConnected(true);
+		setReconnecting(false);
 	}
 
 	private void isConnected(boolean b) {
@@ -236,7 +332,10 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 
 	@Override
 	public void connectionBroken(NIOSocket nioSocket, Exception exception) {
-		log.info("Disconnected");
+		log.error("Disconnected");
+		isConnected(false);
+		if (isReconnecting()) return;
+		reconnect();
 
 	}
 

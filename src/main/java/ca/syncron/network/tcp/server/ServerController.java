@@ -1,6 +1,7 @@
 package ca.syncron.network.tcp.server;
 
 import ca.syncron.controller.AbstractController;
+import ca.syncron.network.tcp.AppRegistrar;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -12,11 +13,12 @@ public class ServerController extends AbstractController {
 	public static       ServerController me     = new ServerController();
 	public static Server mServer;
 
+	public static String getNameId() {return nameId;}
 	public static ServerController getInstance() {
 		return me;
 	}
 
-	public ServerController() {}
+	public ServerController() {AppRegistrar.register(this);}
 
 	//  main()
 ///////////////////////////////////////////////////////

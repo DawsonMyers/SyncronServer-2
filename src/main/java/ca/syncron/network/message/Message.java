@@ -121,7 +121,7 @@ public class Message {
 			log.info("serializeMessage");
 			setSerialMessage(s);
 			//log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(msg));
-			  log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this));
+			log.info("\n" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this));
 		} catch (IOException e) {
 			e.printStackTrace();
 
@@ -133,6 +133,7 @@ public class Message {
 	public synchronized Message deserializeMessage(String msgString) {
 		Message msg = new Message();
 		try {
+
 			StringWriter writer = new StringWriter();
 			ObjectMapper	mapper = new ObjectMapper();
 			//setFormat(true);

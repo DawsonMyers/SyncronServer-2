@@ -2,8 +2,10 @@ package ca.syncron.network.tcp.server;
 
 import ca.syncron.network.message.Message;
 import ca.syncron.network.tcp.AbstractTcpConnector;
+import ca.syncron.network.tcp.AppRegistrar;
 import com.jcabi.aspects.Loggable;
 import naga.NIOSocket;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -11,13 +13,20 @@ import java.io.IOException;
  * Created by Dawson on 3/7/2015.
  */
 public class Server extends AbstractTcpConnector {
-public static Server me;
-ServerController mController= ServerController.getInstance();
+	static              String           nameId = ServerController.class.getSimpleName();
+	public final static org.slf4j.Logger log    = LoggerFactory.getLogger(nameId);
+	public static Server me;
+	ServerController mController = ServerController.getInstance();
+
+	public static String getNameId() {return nameId;}
+
 	public static Server getInstance() {return me;}
+
 	public Server() {
 		me = this;
 		isServer(true);
-	//	initCallbacks();
+		AppRegistrar.register(this);
+		//	initCallbacks();
 		//registerCallbacks(callbacks);
 	}
 
@@ -59,12 +68,13 @@ ServerController mController= ServerController.getInstance();
 //			}
 //		}
 	}
+
 	public void sendNodeMessage(Message msg) {
 		for (User user : mUsers) {
 			if (user.getType() == Message.UserType.NODE) {
-				log.info("ClientController - mArduino.setPin({},{})",msg.getPin(),msg.getValue());
+				log.info("ClientController - mArduino.setPin({},{})", msg.getPin(), msg.getValue());
 				user.getSocket().write(msg.serializeMessage().getBytes());
-			}else log.error("NO NODES CONNECTED - MSG NOT SENT");
+			} else log.error("NO NODES CONNECTED - MSG NOT SENT");
 		}
 	}
 
@@ -84,7 +94,7 @@ ServerController mController= ServerController.getInstance();
 		//if (msg.getSerialMessage().startsWith("{")) msg.setSerialMessage(msg.serializeMessage());
 		msg.setSerialMessage(msg.serializeMessage());
 		log.info("[CHAT] " + msg.getUser() + ": " + msg.getChatMessage());
-                     broadcast(msg.getUser(), msg.getSerialMessage());
+		broadcast(msg.getUser(), msg.getSerialMessage());
 	}
 
 
@@ -139,7 +149,7 @@ ServerController mController= ServerController.getInstance();
 		msg.setAnalogValues(mController.getAnalog());
 		msg.setDigitalValues(mController.getDigital());
 		msg.setUserBundles(mController.getUserBundles());
-		broadcast(msg );
+		broadcast(msg);
 	}
 }
 
