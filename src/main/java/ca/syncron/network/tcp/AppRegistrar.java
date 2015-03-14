@@ -40,6 +40,7 @@ public class AppRegistrar<T> {
 			e.printStackTrace();
 			log.error("Could not identify class to register");
 		}
+		log.debug("Instance of type " + type + " has registered");
 	}
 
 	//
