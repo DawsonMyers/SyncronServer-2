@@ -34,10 +34,9 @@ public class Message {
 	public MessageProcessor mapper;
 
 
+	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN, ACCESS;}
 
-	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN, Access;}
-
-	public enum UserType {NODE, SERVER, ANDROID, UNKNOWN;}
+	public enum UserType {NODE, SERVER, ANDROID, NODE_SERVER, NODE_CLIENT, UNKNOWN;}
 
 	public enum Chat {REGISTER, UPDATE, LOGIN, USERS, DISCONNECT, UNKNOWN;}
 
@@ -208,7 +207,7 @@ public class Message {
 	@JsonIgnore
 	public void status(Message m) {setMessageType(MessageType.STATUS);}
 
-	//
+	//  Message fields
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	MessageType           mMessageType;
 	String                mUserId;
@@ -241,6 +240,8 @@ public class Message {
 
 	String mAdminCommad;
 
+	String  mNodeServerId = "";
+	boolean isTargeted    = false;
 
 	//////////////////////////////////////////////////////////////////
 	public void setUserBundles(ArrayList<UserBundle> userBundles) {

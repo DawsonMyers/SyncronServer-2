@@ -1,12 +1,14 @@
 package ca.syncron.utils;
 
 import ca.syncron.network.message.Message;
+import ca.syncron.network.tcp.AppRegistrar;
 import ca.syncron.network.tcp.client.ClientController;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 /**
  * Created by Dawson on 3/11/2015.
@@ -38,8 +40,8 @@ static ClientController client;
 
 					Message msg = new Message(Message.UserType.ANDROID, Message.UserType.NODE);
 					msg.digital(pin+"",val+"");
-					msg.setPin("2");
-					msg.setValue("1");
+					msg.setPin(vals[0]);
+					msg.setValue(vals[1]);
 
 					client.mClient.sendMessage(msg);
 					//client.setPin(Integer.parseInt(vals[0]), val);
@@ -63,6 +65,15 @@ static ClientController client;
 					case "digital":
 						 msg = new Message(Message.MessageType.DIGITAL, Message.UserType.ANDROID);
 						client.mClient.sendMessage(msg);
+						break;
+					case "count":
+						int rCount = AppRegistrar.getConnector().mHandler.receiveCounter;
+						int sCount = AppRegistrar.getConnector().mHandler.sendCounter;
+						System.out.println("Recieved = " + rCount + "\n Sent = " + sCount);
+						break;
+					case "d":
+
+						System.out.println("Digital = " + Arrays.toString(client.getDigital()) + "\n Analog = " + Arrays.toString(client.getAnalog()));
 						break;
 					case "recon":
 						client.mClient.mSocket.close();

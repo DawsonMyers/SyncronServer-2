@@ -119,7 +119,7 @@ public class Client extends AbstractTcpConnector {
 		if (mSocket != null) {
 			if (msg.getSerialMessage() == null) {
 				msg.serializeMessage();
-				log.error("sendMessage:: serializing msg to send");
+				log.debug("sendMessage:: serializing msg to send");
 				//return;
 			}
 			mSocket.write(msg.getSerialMessage().getBytes());

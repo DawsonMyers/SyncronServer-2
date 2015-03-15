@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: main.java.ca.syncron.boards.ArduinoConnector
+Main-Class: ca.syncron.network.tcp.server.ServerController
 

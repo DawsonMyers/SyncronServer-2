@@ -1,0 +1,34 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Server:jarM14">
+    <output-path>$PROJECT_DIR$/out/artifacts/Server_jarM14</output-path>
+    <root id="archive" name="Server.jar">
+      <element id="module-output" name="Server" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/ch/qos/logback/logback-core/1.1.2/logback-core-1.1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/aspectj/aspectjrt/1.8.4/aspectjrt-1.8.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/codesnippets4all/quick-json/1.0.4/quick-json-1.0.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/jcabi/jcabi-aspects/1.0-SNAPSHOT/jcabi-aspects-1.0-20150212.161704-917.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-io/commons-io/1.3.2/commons-io-1.3.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/jcabi/jcabi-log/0.15/jcabi-log-0.15.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.10/slf4j-api-1.7.10.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy/2.4.0/groovy-2.4.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNewLinux/ardulink.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNewLinux/RXTXcomm.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNewLinux/bluecove-2.1.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNewLinux/ardulink_javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNewLinux/ch.ntb.usb-0.5.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNewLinux/javax.mail-1.5.1.jar" path-in-jar="/" />
+      <element id="library" level="application" name="slf4j-api" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/ch/qos/logback/logback-classic/1.1.2/logback-classic-1.1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-core/2.4.4/jackson-core-2.4.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/AppProjects/Android/Syncron/App/app/libs/naga-debug-3_0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/guava/guava/12.0/guava-12.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.4.4/jackson-databind-2.4.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-annotations/2.4.4/jackson-annotations-2.4.4.jar" path-in-jar="/" />
+      <element id="file-copy" path="$PROJECT_DIR$/librxtxSerial-2.2pre1.so" />
+      <element id="file-copy" path="$PROJECT_DIR$/librxtxSerial.so" />
+    </root>
+  </artifact>
+</component>

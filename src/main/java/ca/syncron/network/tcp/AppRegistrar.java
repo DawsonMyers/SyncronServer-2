@@ -16,15 +16,19 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 public class AppRegistrar<T> {
 	static              String nameId = AppRegistrar.class.getSimpleName();
 	public final static Logger log    = LoggerFactory.getLogger(nameId);
-	public static Server           mServer;
-	public static Client           mClient;
-	public static ServerController mServerController;
-	public static ClientController mClientController;
+
+
+	public static AbstractTcpConnector mConnector;
+	public static Server               mServer;
+	public static Client               mClient;
+	public static ServerController     mServerController;
+	public static ClientController     mClientController;
 
 	public static boolean serverControllerRegistered;
 	public static boolean clientControllerRegistered;
 	public static boolean serverRegistered;
 	public static boolean clientRegistered;
+	public static boolean connectorRegistered;
 
 
 	public AppRegistrar() {}
@@ -34,8 +38,9 @@ public class AppRegistrar<T> {
 		try {
 			if (obj instanceof Server) mServer = ((Server) obj);
 			if (obj instanceof ServerController) mServerController = ((ServerController) obj);
-			if (obj instanceof Server) mClient = ((Client) obj);
-			if (obj instanceof Server) mClientController = ((ClientController) obj);
+			if (obj instanceof Client) mClient = ((Client) obj);
+			if (obj instanceof ClientController) mClientController = ((ClientController) obj);
+			if (obj instanceof AbstractTcpConnector) mConnector = ((AbstractTcpConnector) obj);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("Could not identify class to register");
@@ -47,6 +52,12 @@ public class AppRegistrar<T> {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  Connectors
 	///////////////////////////////////////////////////////
+	public static void registerConnector(AbstractTcpConnector connector) {
+		log.debug("AbstractTcpConnector instance registered");
+		mConnector = connector;
+		connectorRegistered = true;
+	}
+
 	public static void registerServer(Server server) {
 		log.debug("Server instance registered");
 		mServer = server;
@@ -97,6 +108,13 @@ public class AppRegistrar<T> {
 		if (mClient != null) {
 			return mClientController;
 		} else return mClientController = new ClientController();
+	}
+
+	public static AbstractTcpConnector getConnector() {
+		if (mConnector != null) {
+			return null;
+		}
+		return mConnector;
 	}
 
 

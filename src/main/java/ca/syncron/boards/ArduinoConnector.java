@@ -2,7 +2,6 @@ package ca.syncron.boards;
 
 import ca.syncron.network.tcp.client.ClientController;
 import ca.syncron.utils.Constants;
-import ca.syncron.utils.Interfaces;
 import ca.syncron.utils.Interfaces.PinCallbacks;
 import ca.syncron.utils.Interfaces.PinControl;
 import ca.syncron.utils.Interfaces.RawDataAccess;
@@ -150,7 +149,11 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 				log.info("Connected to Arduino");
 			}
 		});
-		link.connect(port);
+		try {
+			link.connect(port);
+		} catch (UnsatisfiedLinkError e) {
+			e.printStackTrace();
+		}
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {

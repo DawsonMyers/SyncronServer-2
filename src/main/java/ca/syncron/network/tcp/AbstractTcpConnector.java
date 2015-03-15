@@ -47,6 +47,8 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	String id = getClass().getSimpleName();
 	public DispatchCallbacks callbacks;
 
+	//	public Metrics.Counter receiveCounter = new Metrics.Counter();
+//	public Metrics.Counter sendCounter    = new Metrics.Counter();
 	public static String userName;
 	public final static Logger log = LoggerFactory.getLogger(nameId);
 	public static Handler mHandler;
@@ -59,6 +61,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	private boolean mIsServer = false;
 	public NIOSocket mSocket;
 	public boolean   mConnected;
+
 
 	public boolean isReconnecting() {
 		return reconnecting;
@@ -86,6 +89,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	public AbstractTcpConnector() {
 		me = this;
 		//mEventMachine = machine;
+		AppRegistrar.register(this);
 		mUsers = new ArrayList<User>();
 		mHandler = new Handler(this);
 		mHandler.start();

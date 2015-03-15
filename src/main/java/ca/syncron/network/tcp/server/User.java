@@ -8,6 +8,7 @@ import ca.syncron.network.message.Message;
 import ca.syncron.network.message.Message.UserType;
 import ca.syncron.network.message.MessageProcessor;
 import ca.syncron.network.tcp.AbstractTcpConnector;
+import ca.syncron.network.tcp.node.NodeClientBundler;
 import ca.syncron.utils.ComConstants;
 import ca.syncron.utils.Constants.Access;
 import naga.NIOSocket;
@@ -22,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,7 +40,7 @@ public class User implements SocketObserver, ComConstants {
 	private final static long   INACTIVITY_TIMEOUT = 500 * 60 * 1000;
 
 
-	private Access       mAccessLevel = Access.USER;
+	private Access mAccessLevel = Access.USER;
 	private DelayedEvent mDisconnectEvent;
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 	public static MessageProcessor mapper;
@@ -52,7 +54,26 @@ public class User implements SocketObserver, ComConstants {
 	public       String               mUserId      = "NotSet";
 	public final Date                 mTimeStamp   = new Date();
 	public       boolean              isRegistered = false;
-	private UserBundle mBundle;
+	private UserBundle                                    mBundle;
+	private HashMap<String, NodeClientBundler.NodeBundle> mNodes;
+
+	public String mNodeServerId;
+
+	public String getNodeServerId() {
+		return mNodeServerId;
+	}
+
+	public void setNodeServerId(String nodeServerId) {
+		mNodeServerId = nodeServerId;
+	}
+
+	public HashMap<String, NodeClientBundler.NodeBundle> getNodes() {
+		return mNodes;
+	}
+
+	public void setNodes(HashMap<String, NodeClientBundler.NodeBundle> bundle) {
+		mNodes = bundle;
+	}
 
 
 	class Test extends Thread {
@@ -253,6 +274,7 @@ public class User implements SocketObserver, ComConstants {
 		setRegistered(true);
 		log.info("User: " + getName() + format("{}", getType().toString()) + " has registered");
 	}
+
 	public void unregister() {
 
 		setRegistered(false);

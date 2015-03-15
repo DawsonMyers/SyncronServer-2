@@ -8,7 +8,7 @@
 	</appender>
 
 	<logger name="deng" level="DEBUG"/>
-
+	<!--HAVE TO CHANGE TO "DEBUG"-->
 	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />
 	</root>

@@ -1,12 +1,15 @@
 package ca.syncron.network.tcp.server;
 
 import ca.syncron.network.message.Message;
+import ca.syncron.network.tcp.node.NodeClientBundler;
 import ca.syncron.utils.Constants;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.HashMap;
+
 
 /**
  * Created by Dawson on 3/12/2015.
@@ -20,6 +23,7 @@ public class UserBundle {
 	public              String           userId = "NotSet";
 	Date timeStamp;// = new Date();
 	Constants.Access accessLevel = Constants.Access.USER;
+	public HashMap<String, NodeClientBundler.NodeBundle> nodes = new HashMap<>();
 
 	@JsonCreator
 	public UserBundle() { }
@@ -30,7 +34,7 @@ public class UserBundle {
 		userId = user.getUserId();
 		timeStamp = user.getTimeStamp();
 		accessLevel = user.getAccessLevel();
-
+		nodes = user.getNodes();
 	}
 
 //	public void init() {
@@ -87,5 +91,6 @@ public class UserBundle {
 		userId = user.getUserId();
 		timeStamp = user.getTimeStamp();
 		accessLevel = user.getAccessLevel();
+		nodes = user.getNodes();
 	}
 }

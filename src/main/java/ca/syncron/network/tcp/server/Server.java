@@ -78,6 +78,16 @@ public class Server extends AbstractTcpConnector {
 		}
 	}
 
+	public void sendNodeServerMessage(Message msg) {
+
+		for (User user : mUsers) {
+			if (user.getType() == Message.UserType.NODE_SERVER) {
+				log.info("Sending msg to NodeServer: {}, Target user=", msg.getUserId(), msg.getTargetId());
+				user.getSocket().write(msg.serializeMessage().getBytes());
+			} else log.error("NO NODES CONNECTED - MSG NOT SENT");
+		}
+	}
+
 	@Override
 	public void handleDigitalMessage(Message msg) {
 		log.info("handleDigitalMessage");

@@ -30,7 +30,7 @@ public class ClientController extends AbstractController implements Runnable, Pi
 	public ClientController() {
 		AppRegistrar.register(this);
 		me = this;
-		setUserName("Dawson");
+		setUserName("Odroid");
 		setUserType(NODE);
 	}
 
@@ -41,7 +41,7 @@ public class ClientController extends AbstractController implements Runnable, Pi
 	//  main()
 ///////////////////////////////////////////////////////
 	public static void main(String[] args) {
-		//(mArduino = new ArduinoConnector(me)).start();
+		(mArduino = new ArduinoConnector(me)).start();
 		(mClient = new Client(me)).start();
 		TestInput.input();
 	}
@@ -72,7 +72,7 @@ public class ClientController extends AbstractController implements Runnable, Pi
 
 	@Override
 	public void setPin(int pin, int state) {
-		//mArduino.setPin(pin,state);
+		mArduino.setPin(pin, state);
 		log.info("ClientController - mArduino.setPin({},{})",pin,state);
 	}
 
@@ -91,13 +91,13 @@ public class ClientController extends AbstractController implements Runnable, Pi
 	public void invalidateAnalog() {
 		Message msg = new Message(NODE, ANDROID);
 		msg.update(getDigital(), getAnalog());
-		mClient.sendMessage(null);
+		mClient.sendUpdateMessage(msg);
 	}
 
 	@Override
 	public void invalidateDigital() {
 		Message msg = new Message(NODE, ANDROID);
 		msg.update(getDigital(), getAnalog());
-		mClient.sendMessage(null);
+		mClient.sendUpdateMessage(msg);
 	}
 }

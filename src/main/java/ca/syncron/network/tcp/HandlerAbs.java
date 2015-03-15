@@ -18,32 +18,37 @@ public class HandlerAbs extends Thread implements MessageCallbacks.DispatchCallb
 	public final static Logger        log            = LoggerFactory.getLogger(HandlerAbs.class.getName());
 	public volatile     MessageLooper mMessageLooper = new MessageLooper(this);
 	ExecutorService executor = Executors.newSingleThreadExecutor();
-	static public MessageProcessor mapper ;
+	static public MessageProcessor mapper;
 	public static AbstractTcpConnector mConnector;
+	public        int              receiveCounter;
+	public        int              sendCounter;
 
 	public HandlerAbs(AbstractTcpConnector connector) {
 		mConnector = connector;
+//		receiveCounter = connector.getReceiveCounter();
+//		sendCounter = connector.getSendCounter();
 		mapper = new MessageProcessor();
 	}
 
 	public HandlerAbs() {
-mapper = new MessageProcessor();
+		mapper = new MessageProcessor();
 	}
 
 	public synchronized void addToReceiveQueue(String msgString) {
-	//	executor.execute(() -> {
-			Message msg = null;
+		//	executor.execute(() -> {
+		Message msg = null;
 
-			if (!msgString.trim().startsWith("{") && !msgString.trim().endsWith("}")) {
-				log.info("addToReceiveQueue - message did not start/end with braces");
-				//log.info(msg);
-				return;
-			}
-			//log.info(mapper.smsgString);
-			msg = mapper.deserializeMessage(msgString);
-			//msg = executor.submit(() -> mapper.deserializeMessage(msgString)).get();
+		if (!msgString.trim().startsWith("{") && !msgString.trim().endsWith("}")) {
+			log.info("addToReceiveQueue - message did not start/end with braces");
+			//log.info(msg);
+			return;
+		}
+		//log.info(mapper.smsgString);
+		msg = mapper.deserializeMessage(msgString);
+		//msg = executor.submit(() -> mapper.deserializeMessage(msgString)).get();
 			if (msg != null && msg.getMessageType() != null) {
 				mMessageLooper.addToReceiveQue(msg);
+
 				log.info("Message added to ReceiveQueue");
 			}
 			else {
@@ -55,10 +60,13 @@ mapper = new MessageProcessor();
 	}
 
 	public void addToReceiveQueue(Message msg) {
+		receiveCounter++;
 		mMessageLooper.addToReceiveQue(msg);
 	}
 
 	public void addToSendQueue(Message msg) {
+		sendCounter++;
+
 		mMessageLooper.addToSendQue(msg);
 	}
 
