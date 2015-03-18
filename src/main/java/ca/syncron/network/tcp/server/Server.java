@@ -8,6 +8,7 @@ import naga.NIOSocket;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by Dawson on 3/7/2015.
@@ -28,6 +29,8 @@ public class Server extends AbstractTcpConnector {
 		AppRegistrar.register(this);
 		//	initCallbacks();
 		//registerCallbacks(callbacks);
+
+
 	}
 
 
@@ -91,12 +94,12 @@ public class Server extends AbstractTcpConnector {
 	@Override
 	public void handleDigitalMessage(Message msg) {
 		log.info("handleDigitalMessage");
-
-		sendNodeMessage(msg);
+		if (msg.getSenderType() == Message.UserType.NODE) broadcast(msg);
+		else sendNodeMessage(msg);
 	}
 
 	@Override
-	public void handleAnalogMessage(Message msg) { }
+	public void handleAnalogMessage(Message msg) {sendNodeMessage(msg); }
 
 	@Override
 	public void handleChatMessage(Message msg) {
@@ -113,7 +116,21 @@ public class Server extends AbstractTcpConnector {
 
 
 	@Override
-	public void handleUpdateMessage(Message msg) { }
+	public void handleUpdateMessage(Message msg) {
+		if (msg != null) {
+			int i = 0;
+			if (msg.getAnalogValues() != null) {
+				mController.setAnalogVals(msg.getAnalogValues());
+				i++;
+			}
+
+			if (msg.getDigitalValues() != null) {
+				mController.setDigitalVals(msg.getDigitalValues());
+				i++;
+			}
+			if (i > 0) invalidateValues();
+		}
+	}
 
 	@Override
 	public void handleRegisterMessage(Message msg) {
@@ -135,7 +152,17 @@ public class Server extends AbstractTcpConnector {
 
 
 	@Override
-	public void handleStatusMessage(Message msg) { }
+	public void handleStatusMessage(Message msg) {
+//		if (msg != null) {
+//			if (msg.getAnalogValues() != null) {
+//				mController.setAnalogVals(msg.getAnalogValues());
+//			}
+//
+//			if (msg.getDigitalValues() != null) {
+//				mController.setDigitalVals(msg.getDigitalValues());
+//			}
+//		}
+	}
 
 	@Override
 	public void handleLoginMessage(Message msg) { }
@@ -152,14 +179,47 @@ public class Server extends AbstractTcpConnector {
 	public <T> void processMessage(T msg) { }
 
 	@Override
+	public void sendUpdateMessage(Message msg) {
+		super.sendUpdateMessage(msg);
+		if (msg == null) {
+			msg = new Message().newUpdate(this.mController);
+			broadcastUsers(msg);
+			return;
+		}
+		broadcastUsers(msg);
+	}
+
+
+	@Override
 	public void invalidateStatus() {
 		super.invalidateStatus();
 		Message msg = new Message();
 		msg.status(msg);
-		msg.setAnalogValues(mController.getAnalog());
-		msg.setDigitalValues(mController.getDigital());
+//		msg.setAnalogValues(mController.getAnalog());
+//		msg.setDigitalValues(mController.getDigital());
 		msg.setUserBundles(mController.getUserBundles());
 		broadcast(msg);
+	}
+
+	public void invalidateValues() {
+		log.info("Analog = " + Arrays.toString(mController.getAnalog()));
+		log.info("Analog = " + Arrays.toString(mController.getDigital()));
+		Message msg = new Message();
+		msg.update(mController.getDigital(), mController.getAnalog());
+		broadcast(msg);
+	}
+
+	@Override
+	public void sendStreamMessage(Message msg) {
+		super.sendStreamMessage(msg);
+		sendNodeMessage(msg);
+	}
+
+	@Override
+	public void handleStreamMessage(Message msg) {
+		super.handleStreamMessage(msg);
+		if (msg.getUserType() == Message.UserType.NODE) sendStreamMessage(msg);
+		else broadcast(msg);
 	}
 }
 

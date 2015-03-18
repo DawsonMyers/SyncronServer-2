@@ -36,6 +36,25 @@ public abstract class AbstractController implements RawDataAccess, Runnable {
 
 	//  getters and setters
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	long sampleRate = 500;
+
+	volatile boolean streamEnabled;
+
+	public long getSampleRate() {
+		return sampleRate;
+	}
+
+	public void setSampleRate(long sampleRate) {
+		this.sampleRate = sampleRate;
+	}
+
+	public boolean isStreamEnabled() {
+		return streamEnabled;
+	}
+
+	public void setStreamEnabled(boolean streamEnabled) {
+		this.streamEnabled = streamEnabled;
+	}
 
 	public int[] getAnalogVals() {
 		return analogVals;

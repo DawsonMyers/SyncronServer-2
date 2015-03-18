@@ -43,6 +43,7 @@ public interface MessageCallbacks {
 		public abstract void handleRegisterMessage(Message msg);
 
 		public abstract void handleStatusMessage(Message msg);
+		public abstract void handleStreamMessage(Message msg);
 
 		public abstract void handleLoginMessage(Message msg);
 
@@ -54,6 +55,10 @@ public interface MessageCallbacks {
 		public abstract void sendChatMessage(Message msg);
 		public abstract void sendSystemMessage(Message msg);
 		public abstract void sendRegisterMessage(Message msg);
+		public abstract void sendStreamMessage(Message msg);
+		public abstract void sendDigitalMessage(int pin, int value);
+		public abstract void sendDigitalMessage(String pin, String value);
+		public abstract void sendAnalogMessage(Message msg);
 
 		<T> void processMessage(T msg);
 	}

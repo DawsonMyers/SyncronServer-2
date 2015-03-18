@@ -102,7 +102,7 @@ public interface ComConstants {
 	public String tDIGITAL  = "digital";
 	public String tANALOG   = "analog";
 	public String tADMIN    = "admin";
-	public String tUPDATE   = "update";
+	public String tUPDATE = "newUpdate";
 	public String tREGISTER = "register";
 	public String tSTATUS   = "status";
 	public String tLOGIN    = "login";

@@ -49,7 +49,7 @@ public class HandlerAbs extends Thread implements MessageCallbacks.DispatchCallb
 			if (msg != null && msg.getMessageType() != null) {
 				mMessageLooper.addToReceiveQue(msg);
 
-				log.info("Message added to ReceiveQueue");
+
 			}
 			else {
 				log.error("addtoReceiveQueue", "Null deserialization returned a null message");
@@ -61,12 +61,13 @@ public class HandlerAbs extends Thread implements MessageCallbacks.DispatchCallb
 
 	public void addToReceiveQueue(Message msg) {
 		receiveCounter++;
+		log.info("Message #" + receiveCounter + " added to ReceiveQueue");
 		mMessageLooper.addToReceiveQue(msg);
 	}
 
 	public void addToSendQueue(Message msg) {
 		sendCounter++;
-
+		log.info("Message #" + sendCounter + " added to SendQueue");
 		mMessageLooper.addToSendQue(msg);
 	}
 
@@ -119,6 +120,26 @@ public class HandlerAbs extends Thread implements MessageCallbacks.DispatchCallb
 	}
 
 	@Override
+	public void sendStreamMessage(Message msg) {
+
+	}
+
+	@Override
+	public void sendDigitalMessage(int pin, int value) {
+
+	}
+
+	@Override
+	public void sendDigitalMessage(String pin, String value) {
+
+	}
+
+	@Override
+	public void sendAnalogMessage(Message msg) {
+
+	}
+
+	@Override
 	public void handleDigitalMessage(Message msg) {
 
 	}
@@ -150,6 +171,11 @@ public class HandlerAbs extends Thread implements MessageCallbacks.DispatchCallb
 
 	@Override
 	public void handleStatusMessage(Message msg) {
+
+	}
+
+	@Override
+	public void handleStreamMessage(Message msg) {
 
 	}
 

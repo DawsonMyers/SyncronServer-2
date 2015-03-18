@@ -7,7 +7,10 @@ import naga.NIOSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static ca.syncron.network.message.Message.UserType.ANDROID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import static ca.syncron.network.message.Message.UserType.NODE;
 
 /**
@@ -17,6 +20,7 @@ public class Client extends AbstractTcpConnector {
 	static              String nameId = Client.class.getSimpleName();
 	public final static Logger log    = LoggerFactory.getLogger(nameId);
 	public static ClientController mController;
+	public ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
 	public Client() { }
 
@@ -130,8 +134,9 @@ public class Client extends AbstractTcpConnector {
 	@Override
 	public void sendUpdateMessage(Message msg) {
 		if (msg == null) {
-			msg = new Message(NODE, ANDROID);
-			msg.update(mController.getDigital(), mController.getAnalog());
+			msg = new Message().newUpdate(this.mController);
+//			msg = new Message(NODE, ANDROID);
+//			msg.update(mController.getDigital(), mController.getAnalog());
 		}
 		sendMessage(msg);
 	}
@@ -148,6 +153,52 @@ public class Client extends AbstractTcpConnector {
 
 	@Override
 	public void sendRegisterMessage(Message msg) {
+
+	}
+
+	@Override
+	public void sendStreamMessage(Message msg) {
+		super.sendStreamMessage(msg);
+		if (msg != null) {
+			sendMessage(msg);
+			return;
+		}
+		msg = new Message(Message.MessageType.STREAM, NODE);
+		msg.setAnalogValues(mController.getAnalog());
+		sendMessage(msg);
+	}
+
+	public void sendAnalogMessage(Message msg) {
+
+		if (msg != null) {
+			sendMessage(msg);
+			return;
+		}
+		msg = new Message(Message.MessageType.STREAM, NODE);
+		msg.setAnalogValues(mController.getAnalog());
+		sendMessage(msg);
+	}
+
+	@Override
+	public void handleStreamMessage(Message msg) {
+		super.handleStreamMessage(msg);
+		mController.setSampleRate(msg.getSampleRate());
+		mController.setStreamEnabled(msg.getStreamEnabled());
+		if (mController.getSreamEnabled()) {
+			startStream();
+		} else scheduler.shutdown();
+	}
+
+	private void startStream() {
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				sendUpdateMessage(null);
+			}
+		};
+
+		long rate = mController.getSampleRate();
+		scheduler.schedule(r, rate, TimeUnit.MILLISECONDS);
 
 	}
 

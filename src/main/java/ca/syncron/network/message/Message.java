@@ -3,6 +3,7 @@
  */
 package ca.syncron.network.message;
 
+import ca.syncron.controller.AbstractController;
 import ca.syncron.network.tcp.server.User;
 import ca.syncron.network.tcp.server.UserBundle;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -137,7 +138,9 @@ public class Message {
 			ObjectMapper	mapper = new ObjectMapper();
 			//setFormat(true);
 			log.info("deserializeMessage");
+
 			msg = mapper.readValue(msgString, Message.class);
+			log.info("\n" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(msg));
 		} catch (IOException e) {
 			e.printStackTrace();
 
@@ -149,6 +152,12 @@ public class Message {
 		setMessageType(MessageType.DIGITAL);
 		setPin(pin);
 		setValue(value);
+	}
+
+	@JsonIgnore
+	public void analog(int[] values) {
+		setMessageType(MessageType.ANALOG);
+		setAnalogValues(values);
 	}
 
 	//  reqResponse used to request a list of connected users
@@ -191,6 +200,13 @@ public class Message {
 		setMessageType(MessageType.UPDATE);
 		setDigitalValues(digitalValues);
 		setAnalogValues(analogValues);
+	}
+
+	public Message newUpdate(AbstractController c) {
+		Message msg = new Message(MessageType.UPDATE, UserType.ANDROID);
+		msg.setDigitalValues(c.getDigital());
+		msg.setAnalogValues(c.getAnalog());
+		return msg;
 	}
 
 	@JsonIgnore
@@ -242,6 +258,30 @@ public class Message {
 
 	String  mNodeServerId = "";
 	boolean isTargeted    = false;
+
+	long sampleRate;
+
+	boolean streamEnabled;
+
+	public boolean getStreamEnabled() {
+		return streamEnabled;
+	}
+
+	public long getSampleRate() {
+		return sampleRate;
+	}
+
+	public void setSampleRate(long sampleRate) {
+		this.sampleRate = sampleRate;
+	}
+
+	public boolean isStreamEnabled() {
+		return streamEnabled;
+	}
+
+	public void setStreamEnabled(boolean streamEnabled) {
+		this.streamEnabled = streamEnabled;
+	}
 
 	//////////////////////////////////////////////////////////////////
 	public void setUserBundles(ArrayList<UserBundle> userBundles) {
@@ -571,6 +611,5 @@ public class Message {
 	public void setUserName(String userName) {
 		mUserName = userName;
 	}
-
 
 }

@@ -272,7 +272,11 @@ public class User implements SocketObserver, ComConstants {
 		setType(msg.getUserType());
 		mBundle.init(this);
 		setRegistered(true);
+		try {
 		log.info("User: " + getName() + format("{}", getType().toString()) + " has registered");
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void unregister() {
@@ -280,7 +284,12 @@ public class User implements SocketObserver, ComConstants {
 		setRegistered(false);
 		mServer.getUserBundles().remove(getUserBundle());
 		mServer.removeUser(this);
-		log.info("User: " + getName() + format("{}", getType().toString()) + " has disconnected");
+
+		try {
+			log.info("User: " + getName() + format("{}", getType().toString()) + " has disconnected");
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
 		mServer.invalidateStatus();
 	}
 

@@ -93,6 +93,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 		mUsers = new ArrayList<User>();
 		mHandler = new Handler(this);
 		mHandler.start();
+
 	}
 
 
@@ -266,7 +267,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 		// Create a new user to hande the new connection.
 		log.info("New user connected from " + nioSocket.getIp() + ".");
 		User user = new User(this, nioSocket);
-		mUserMap.putIfAbsent(user.getUserId(), user);
+		if (!mUserMap.containsKey(user.getUserId())) mUserMap.put(user.getUserId(), user);
 		mUsers.add(user);
 		mController.getUserBundles().add(user.getUserBundle());
 		//mUsers.add(user);
@@ -298,6 +299,12 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 		}
 	}
 
+	public void broadcastUsers(Message msg) {
+		byte[] bytesToSend = msg.serializeMessage().getBytes();
+		for (User user : mUsers) {
+			if (user.getType() != Message.UserType.NODE) user.sendBroadcast(bytesToSend);
+		}
+	}
 	public EventMachine getEventMachine() {
 		return mEventMachine;
 	}
@@ -352,7 +359,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	}
 
 	public void packetReceived(User user, byte[] packet) {
-		log.info("Packet received");
+		log.info("Packet received from: " + user.getUserId());
 
 		Message msg = new Message();
 		msg.setSerialMessage(new String(packet));
@@ -415,6 +422,11 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	}
 
 	@Override
+	public void handleStreamMessage(Message msg) {
+
+	}
+
+	@Override
 	public void handleLoginMessage(Message msg) {
 		log.info("handleLoginMessage");
 	}
@@ -456,6 +468,26 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	@Override
 	public void sendRegisterMessage(Message msg) {
 		log.info("handleRegisterMessage");
+	}
+
+	@Override
+	public void sendStreamMessage(Message msg) {
+
+	}
+
+	@Override
+	public void sendDigitalMessage(int pin, int value) {
+
+	}
+
+	@Override
+	public void sendDigitalMessage(String pin, String value) {
+
+	}
+
+	@Override
+	public void sendAnalogMessage(Message msg) {
+
 	}
 
 	@Override

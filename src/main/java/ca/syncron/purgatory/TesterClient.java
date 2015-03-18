@@ -71,6 +71,18 @@ public static TesterClient client;
 						Message msg2 = new Message(MessageType.DIGITAL, UserType.ANDROID);
 						client.sendMessage(msg2);
 						break;
+					case "stream1":
+						msg = new Message(MessageType.STREAM, UserType.ANDROID);
+						msg.setSampleRate(600);
+						msg.setStreamEnabled(true);
+						client.sendMessage(msg);
+						break;
+					case "stream0":
+						msg = new Message(MessageType.STREAM, UserType.ANDROID);
+						msg.setSampleRate(600);
+						msg.setStreamEnabled(false);
+						client.sendMessage(msg);
+						break;
 					case "recon":
 						client.mSocket.close();
 						client = null;

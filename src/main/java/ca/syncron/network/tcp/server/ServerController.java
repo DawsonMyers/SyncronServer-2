@@ -2,6 +2,7 @@ package ca.syncron.network.tcp.server;
 
 import ca.syncron.controller.AbstractController;
 import ca.syncron.network.tcp.AppRegistrar;
+import ca.syncron.utils.TestInput;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -25,7 +26,8 @@ public class ServerController extends AbstractController {
 	public static void main(String[] args) {
 
 		(mServer = new Server(true)).start();
-		//TestInput.input();
+		TestInput.input();
+		TestInput.serverRef(me);
 	}
 
 	@Override

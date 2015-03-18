@@ -105,10 +105,11 @@ public class MessageLooper {
 	}
 
 	public synchronized void dispatchReceiveMessage(Message msg) {
+
+		//	executor.execute(() -> {
+		MessageType type = msg.getMessageType();
+		log.info("Dispatching " + type + " message");
 		//log.debug("dispatchReceiveMessage", "Dispatching message");
-		log.info("\"dispatchReceiveMessage\", \"Dispatching message\"");
-	//	executor.execute(() -> {
-			MessageType type = msg.getMessageType();
 			switch (type) {
 				case DIGITAL:
 					mObserver.handleDigitalMessage(msg);
@@ -138,6 +139,10 @@ public class MessageLooper {
 				case CHAT:
 					log.info("dispatching Chat message");
 					mObserver.handleChatMessage(msg);
+					break;
+				case STREAM:
+					log.info("dispatching Stream message");
+					mObserver.handleStreamMessage(msg);
 					break;
 
 				default:

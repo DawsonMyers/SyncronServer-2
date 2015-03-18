@@ -11,6 +11,7 @@ public class Constants {
 		public static final int    TCP            = 6500;
 		public static final String SERIAL_LINUX   = "/dev/ttyS10";
 		public static final String SERIAL_WINDOWS = "COM4";
+		public static final String SERIAL_WINDOWS8 = "COM8";
 		public static       String serialPort     = SERIAL_LINUX;
 
 		public enum SerialPorts {

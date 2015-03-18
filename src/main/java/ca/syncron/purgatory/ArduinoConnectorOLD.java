@@ -31,7 +31,7 @@ public class ArduinoConnectorOLD {
 			}
 		});
 
-		link.connect(Constants.Ports.SERIAL_WINDOWS);
+		link.connect(Constants.Ports.SERIAL_WINDOWS8);
 		try {
 			System.out.println("wait for a while");
 			Thread.sleep(2000);

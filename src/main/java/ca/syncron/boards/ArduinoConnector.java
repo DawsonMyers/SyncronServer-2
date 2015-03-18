@@ -26,7 +26,7 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 	//public static ArdulinkSerial    con;
 	public static ArduinoConnector con;
 	public static          Link   link        = Link.getDefaultInstance();
-	public static          String port        = Constants.Ports.SERIAL_LINUX;//PORT_SERIAL_LINUX;	//"/dev/ttyS10"; //
+	public static String port = Constants.Ports.SERIAL_WINDOWS;//PORT_SERIAL_LINUX;	//"/dev/ttyS10"; //
 	public volatile static int[]  analogVals  = new int[12];
 	public volatile static int[]  digitalVals = new int[12];
 	public volatile static String analog      = "";
@@ -42,6 +42,8 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 		this();
 		mObserver = controller;
 		mController = controller;
+		mController.setAnalogVals(analogVals);
+		mController.setDigitalVals(digitalVals);
 		Constants.Ports.setSerialPort(Constants.Ports.SERIAL_LINUX);
 	}
 
@@ -107,14 +109,17 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 
 	@Override
 	public void digitalPinChanged(int pin, int value) {
-		log.info("Digital change: pin = " + pin + " | state= " + value);
-		mLock.writeLock().lock();
+		//log.info("Digital change: pin = " + pin + " | state= " + value);
+		//	mLock.writeLock().lock();
 		try {
 			digitalVals[pin - 2] = value;
+
 			mObserver.digitalPinChanged(pin, value);
+			mController.invalidateDigital();
 		} finally {
-			mLock.writeLock().unlock();
+			//mLock.writeLock().unlock();
 		}
+
 
 	}
 
@@ -155,7 +160,7 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 			e.printStackTrace();
 		}
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -238,11 +243,21 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 				mAnalogPins = new AnalogPin[analogPins];
 				mAnalogPins[i] = new AnalogPin(observer, link);
 				mAnalogPins[i].initPin(i);
+				delay(10);
 			}
 			for (int i = 0; i < digitalPins; i++) {
 				mDigitalPins = new DigitalPin[digitalPins];
 				mDigitalPins[i] = new DigitalPin(observer, link);
 				mDigitalPins[i].initPin(i + 2);
+				delay(10);
+			}
+		}
+
+		public void delay(int delay) {
+			try {
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -322,6 +337,14 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 					}
 
 				});
+				sePinValue(0);
+				//	mLink.startListenDigitalPin(pin);
+//				mLink.startListenDigitalPin(pin, new ReplyMessageCallback()  {
+//					@Override
+//					public void replyInfo(MessageInfo messageInfo) {
+//						messageInfo.
+//					}
+//				});
 			}
 
 			@Override
