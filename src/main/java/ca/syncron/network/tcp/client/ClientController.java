@@ -2,6 +2,7 @@ package ca.syncron.network.tcp.client;
 
 import ca.syncron.boards.ArduinoConnector;
 import ca.syncron.controller.AbstractController;
+import ca.syncron.gui.ConnectionUi;
 import ca.syncron.network.tcp.AppRegistrar;
 import ca.syncron.utils.Interfaces.PinCallbacks;
 import ca.syncron.utils.Interfaces.PinStatus;
@@ -24,11 +25,23 @@ public class ClientController extends AbstractController implements Runnable, Pi
 	public static ClientController me = new ClientController();
 	private boolean mSreamEnabled;
 
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
+	}
+
+	public String port = "/dev/ttyS10";
+
 	public static String getNameId() {return nameId;}
 	//  Constructors
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public ClientController() {
+		ConnectionUi connectionPannel = new ConnectionUi();
+		connectionPannel.setVisible(true);
 		AppRegistrar.register(this);
 		me = this;
 		setUserName("Odroid");

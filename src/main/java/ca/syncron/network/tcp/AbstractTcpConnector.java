@@ -116,16 +116,18 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 
 	@Override
 	public void run() {
-		connect();
+		if (!isConnected()) connect();
 	}
 
 	public void connect() {
 		int port = Ports.getTcp();
 		//	isServer(true);
+
 		if (isServer()) {
 
 			try {   // Server
-				log.info("Starting Server");
+				if (!isReconnecting()) log.info("Starting Server");
+				else log.info("Reconnecting to Server");
 				EventMachine machine = new EventMachine();
 				mEventMachine = machine;
 				NIOServerSocket socket = machine.getNIOService().openServerSocket(port);
@@ -141,7 +143,9 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 			String ip = Constants.IpAddresses.IP;
 			try {
 				//log.d(id, "Run()");
-				log.info("Starting Client");
+				if (!isReconnecting()) log.info("Starting Client");
+				else log.info("Reconnecting to Server");
+				//log.info("Starting Client");
 				EventMachine machine = new EventMachine();
 
 				InetAddress ipAddress = InetAddress.getByName(ip);
@@ -181,13 +185,13 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 			try {
 				Thread.sleep(1000);
 
-				log.error("Attempting to connect a new server instance");
+				log.info("Attempting to connect a new server instance");
 				while (!isConnected()) {
 					count++;
 					index++;
 					connect();
-					if (index >= 3) {
-						log.error("Connection attempts: " + count);
+					if (index >= 5) {
+						log.info("Connection attempts: " + count);
 						index = 0;
 					}
 					Thread.sleep(5000);
@@ -205,7 +209,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 				InetAddress ipAddress = InetAddress.getByName(ip);
 //
 
-				log.error("Attempting to reconnect to server");
+				log.info("Attempting to reconnect to server");
 				while (!isConnected()) {
 					count++;
 					if (mSocket.isOpen()) break;
@@ -219,8 +223,8 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 
 						index++;
 						connect();
-						if (index >= 3) {
-							log.error("Connection attempts: " + count);
+						if (index >= 5) {
+							log.info("Connection attempts: " + count);
 							index = 0;
 						}
 						Thread.sleep(5000);
@@ -343,9 +347,9 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 
 	@Override
 	public void connectionBroken(NIOSocket nioSocket, Exception exception) {
-		log.error("Disconnected");
 		isConnected(false);
 		if (isReconnecting()) return;
+		log.error("Disconnected");
 		reconnect();
 
 	}

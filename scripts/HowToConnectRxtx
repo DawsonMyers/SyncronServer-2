@@ -1,0 +1,12 @@
+
+Move librxtxSerial to the same directory as runnable jar. create sym link for .so so that it's name does not contain the version numbers.
+ 
+ 
+This targets the native file
+
+Sym link serial port so that it will be recognized by Rxtx:
+	ln -s /dev/ttyACM0 /dev/ttyS10
+	
+Run at cli:
+	cd [dir of jar]
+	java -Djava.library.path=".:./librxtxSerial.so" -jar mar4.jar "/dev/ttyS10"

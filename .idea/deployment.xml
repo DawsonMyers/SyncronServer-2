@@ -5,7 +5,8 @@
       <paths name="Odroid">
         <serverdata>
           <mappings>
-            <mapping deploy="/a/" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/a/" local="$PROJECT_DIR$/out" web="/" />
+            <mapping deploy="/a/" local="$PROJECT_DIR$/out/artifacts/Server_jar" />
           </mappings>
         </serverdata>
       </paths>

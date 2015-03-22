@@ -1,5 +1,6 @@
 package ca.syncron.boards;
 
+import ca.syncron.gui.DigitalOutputGui;
 import ca.syncron.network.tcp.client.ClientController;
 import ca.syncron.utils.Constants;
 import ca.syncron.utils.Interfaces.PinCallbacks;
@@ -26,7 +27,7 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 	//public static ArdulinkSerial    con;
 	public static ArduinoConnector con;
 	public static          Link   link        = Link.getDefaultInstance();
-	public static String port = Constants.Ports.SERIAL_WINDOWS;//PORT_SERIAL_LINUX;	//"/dev/ttyS10"; //
+	public static String port = Constants.Ports.SERIAL_WINDOWS8;//PORT_SERIAL_LINUX;	//"/dev/ttyS10"; //WINDOWS
 	public volatile static int[]  analogVals  = new int[12];
 	public volatile static int[]  digitalVals = new int[12];
 	public volatile static String analog      = "";
@@ -44,7 +45,7 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 		mController = controller;
 		mController.setAnalogVals(analogVals);
 		mController.setDigitalVals(digitalVals);
-		Constants.Ports.setSerialPort(Constants.Ports.SERIAL_LINUX);
+		Constants.Ports.setSerialPort(Constants.Ports.SERIAL_WINDOWS8);
 	}
 
 	//public static void main(String[] args) {
@@ -164,6 +165,10 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		//Console console = new Console();
+		//console.setVisible(true);
+		DigitalOutputGui gui = new DigitalOutputGui();
+		gui.setVisible(true);
 		ArduinoPins pins = new ArduinoPins(this, link, analogPinCount, digitalPinCount);
 
 	}

@@ -8,11 +8,11 @@
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="naga-debug-3_0" level="application" />
     <orderEntry type="library" exported="" name="slf4j-api" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="ArdulinkNewLinux" level="application" />
+    <orderEntry type="library" exported="" name="ArdulinkNewLinux" level="application" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.codehaus.groovy:groovy:2.4.0" level="application" />
     <orderEntry type="library" exported="" name="Maven: com.codesnippets4all:quick-json:1.0.4" level="project" />
     <orderEntry type="library" exported="" name="Maven: com.jcabi:jcabi-aspects:1.0-SNAPSHOT" level="project" />
@@ -30,6 +30,6 @@
     <orderEntry type="library" exported="" scope="RUNTIME" name="Maven: org.codehaus.groovy:groovy:2.4.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: com.google.guava:guava:12.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
-    <orderEntry type="library" exported="" name="ArdulinkNewWin" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="ArdulinkNewWin" level="application" />
   </component>
 </module>
