@@ -138,7 +138,7 @@ public class Server extends AbstractTcpConnector {
 		try {
 			User user = msg.getUser();
 			user.register(msg);
-			//getUserBundles().add(user.getUserBundle());
+			getUserBundles().add(user.getUserBundle());
 			log.info("User: " + msg.getUserName() + " has registered");
 //			user.setType(msg.getUserType());
 //			user.setName(msg.getUserId());
