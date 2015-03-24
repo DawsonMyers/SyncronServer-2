@@ -67,7 +67,7 @@ public class TestInput {
 						break;
 					case "chat":
 						  msg = new Message(Message.MessageType.CHAT, Message.UserType.ANDROID);
-						msg.setChatMessage("DAWSON");
+						msg.setChatMessage("This is a chat message");
 						client.mClient.sendMessage(msg);
 						break;
 					case "reg":

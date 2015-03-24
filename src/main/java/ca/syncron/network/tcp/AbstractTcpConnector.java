@@ -271,7 +271,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 		// Create a new user to hande the new connection.
 		log.info("New user connected from " + nioSocket.getIp() + ".");
 		User user = new User(this, nioSocket);
-		if (!mUserMap.containsKey(user.getUserId())) mUserMap.put(user.getUserId(), user);
+		//	if (!mUserMap.containsKey(user.getUserId())) mUserMap.put(user.getUserId(), user);
 		mUsers.add(user);
 		mController.getUserBundles().add(user.getUserBundle());
 		//mUsers.add(user);
@@ -317,6 +317,14 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 		if (mUserMap.containsKey(targetId)) {
 			User target = mUserMap.get(targetId);
 			target.getSocket().write(msgString.getBytes());
+		}
+	}
+
+	public void sendToTarget(Message msg) {
+		if (mUserMap.containsKey(msg.getTargetId())) {
+			User target = mUserMap.get(msg.getTargetId());
+			byte[] bytesToSend = msg.serializeMessage().getBytes();
+			target.getSocket().write(bytesToSend);
 		}
 	}
 

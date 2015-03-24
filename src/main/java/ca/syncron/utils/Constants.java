@@ -40,7 +40,7 @@ public class Constants {
 		public static final String HTTP_SYNCRON = "http://syncron.ca";
 		public static final String HTTP_DAWSON  = "http://dawsonmyers.ca";
 		public static final String HTTP_SERVER  = "http://dawsonmyers.ca";
-		public static String IP = IP_SERVER;
+		public static String IP = IP_HOME;
 
 		public static void setIp(String ip) {
 			IP = ip;

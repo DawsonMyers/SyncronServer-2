@@ -22,8 +22,10 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -56,8 +58,11 @@ public class User implements SocketObserver, ComConstants {
 	public       boolean              isRegistered = false;
 	private UserBundle                                    mBundle;
 	private HashMap<String, NodeClientBundler.NodeBundle> mNodes;
-
+	private ArrayList<String> subscribers = new ArrayList<>();
 	public String mNodeServerId;
+
+	public volatile static int[] analogVals  = new int[12];
+	public volatile static int[] digitalVals = new int[12];
 
 	public String getNodeServerId() {
 		return mNodeServerId;
@@ -75,6 +80,11 @@ public class User implements SocketObserver, ComConstants {
 		mNodes = bundle;
 	}
 
+	public void subscribe(String userId, boolean subscribe) {
+		if (subscribe) {
+			if (!subscribers.contains(userId)) subscribers.add(userId);
+		} else if (subscribers.contains(userId)) subscribers.remove(userId);
+	}
 
 	class Test extends Thread {
 		public Test() {start();}
@@ -272,8 +282,9 @@ public class User implements SocketObserver, ComConstants {
 		setType(msg.getUserType());
 		mBundle.init(this);
 		setRegistered(true);
+
 		try {
-		log.info("User: " + getName() + format("{}", getType().toString()) + " has registered");
+			log.info("User: " + getName() + format("{}", getType().toString()) + " has registered");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
@@ -310,6 +321,32 @@ public class User implements SocketObserver, ComConstants {
 
 	}
 
+	public static int[] getAnalogVals() {
+		return analogVals;
+	}
+
+	public static void setAnalogVals(int[] analogVals) {
+		User.analogVals = analogVals;
+	}
+
+	public static int[] getDigitalVals() {
+		return digitalVals;
+	}
+
+	public static void setDigitalVals(int[] digitalVals) {
+		User.digitalVals = digitalVals;
+		notifySubscribers();
+	}
+
+	private static void notifySubscribers() {
+		List<User> users = Server.getInstance().mUsers;
+		for (User user : users) {
+
+			if (user.getUserId()) {
+
+			}
+		}
+	}
 }
 
 

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -33,9 +34,36 @@ public class Message {
 	public final static Logger log = LoggerFactory.getLogger(Message.class.getName());
 	@JsonIgnore
 	public MessageProcessor mapper;
+	private Date mTimestamp;
+
+	@JsonIgnore
+	public void initVals() {
+		setAnalogValues(getUser().getAnalogVals());
+		setDigitalValues(getUser().getDigitalVals());
+	}
+
+	@JsonIgnore
+	public void initUser() {
+		User u = getUser();
+		setUserId(u.getUserId());
+		setUserType(u.getType());
+		setUserName(u.getName());
+		setTimestamp(u.getTimeStamp());
+		if (getUserType() == UserType.NODE) {
+			initVals();
+		}
+	}
+
+	public void setTimestamp(Date timestamp) {
+		mTimestamp = timestamp;
+	}
+
+	public Date getTimestamp() {
+		return mTimestamp;
+	}
 
 
-	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN, ACCESS;}
+	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN, ACCESS, TARGET;}
 
 	public enum UserType {NODE, SERVER, ANDROID, NODE_SERVER, NODE_CLIENT, UNKNOWN;}
 

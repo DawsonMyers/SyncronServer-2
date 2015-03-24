@@ -73,6 +73,7 @@ public class Server extends AbstractTcpConnector {
 	}
 
 	public void sendNodeMessage(Message msg) {
+
 		for (User user : mUsers) {
 			if (user.getType() == Message.UserType.NODE) {
 				log.info("ClientController - mArduino.setPin({},{})", msg.getPin(), msg.getValue());
@@ -94,6 +95,7 @@ public class Server extends AbstractTcpConnector {
 	@Override
 	public void handleDigitalMessage(Message msg) {
 		log.info("handleDigitalMessage");
+		if (msg.getTargetId() != null) sendToTarget(msg);
 		if (msg.getSenderType() == Message.UserType.NODE) broadcast(msg);
 		else sendNodeMessage(msg);
 	}
@@ -103,6 +105,7 @@ public class Server extends AbstractTcpConnector {
 
 	@Override
 	public void handleChatMessage(Message msg) {
+		if (msg.getTargetId() != null) sendToTarget(msg);
 		log.info("handleChatMessage");
 		//if (msg.getSerialMessage().startsWith("{")) msg.setSerialMessage(msg.serializeMessage());
 		msg.setSerialMessage(msg.serializeMessage());
@@ -117,19 +120,26 @@ public class Server extends AbstractTcpConnector {
 
 	@Override
 	public void handleUpdateMessage(Message msg) {
+		if (msg.getTargetId() != null) sendToTarget(msg);
 		if (msg != null) {
 			int i = 0;
 			if (msg.getAnalogValues() != null) {
 				mController.setAnalogVals(msg.getAnalogValues());
+				msg.getUser().setAnalogVals(msg.getAnalogValues());
 				i++;
 			}
 
 			if (msg.getDigitalValues() != null) {
 				mController.setDigitalVals(msg.getDigitalValues());
+				msg.getUser().setDigitalVals(msg.getDigitalValues());
 				i++;
 			}
-			if (i > 0) invalidateValues();
+			if (i > 0) invalidateValues(msg);
 		}
+	}
+
+	private void invalidateValues(Message msg) {
+		msg.initVals();
 	}
 
 	@Override
@@ -138,6 +148,7 @@ public class Server extends AbstractTcpConnector {
 		try {
 			User user = msg.getUser();
 			user.register(msg);
+			if (!mUserMap.containsKey(user.getUserId())) mUserMap.put(user.getUserId(), user);
 			getUserBundles().add(user.getUserBundle());
 			log.info("User: " + msg.getUserName() + " has registered");
 //			user.setType(msg.getUserType());
@@ -153,6 +164,7 @@ public class Server extends AbstractTcpConnector {
 
 	@Override
 	public void handleStatusMessage(Message msg) {
+		if (msg.getTargetId() != null) sendToTarget(msg);
 //		if (msg != null) {
 //			if (msg.getAnalogValues() != null) {
 //				mController.setAnalogVals(msg.getAnalogValues());
@@ -165,10 +177,10 @@ public class Server extends AbstractTcpConnector {
 	}
 
 	@Override
-	public void handleLoginMessage(Message msg) { }
+	public void handleLoginMessage(Message msg) { if (msg.getTargetId() != null) sendToTarget(msg);}
 
 	@Override
-	public void handleUserMessage(Message msg) { }
+	public void handleUserMessage(Message msg) { if (msg.getTargetId() != null) sendToTarget(msg);}
 
 	@Override
 	public void handleErrorMessage(Message msg) {
@@ -186,6 +198,7 @@ public class Server extends AbstractTcpConnector {
 			broadcastUsers(msg);
 			return;
 		}
+
 		broadcastUsers(msg);
 	}
 
@@ -206,6 +219,7 @@ public class Server extends AbstractTcpConnector {
 		log.info("Analog = " + Arrays.toString(mController.getDigital()));
 		Message msg = new Message();
 		msg.update(mController.getDigital(), mController.getAnalog());
+
 		broadcast(msg);
 	}
 

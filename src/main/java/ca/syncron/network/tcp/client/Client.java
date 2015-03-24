@@ -126,6 +126,12 @@ public class Client extends AbstractTcpConnector {
 				log.debug("sendMessage:: serializing msg to send");
 				//return;
 			}
+			try {
+				if (msg.getUser().getUserId() != null) msg.setUserId(msg.getUser().getUserId());
+				msg.setUserType(msg.getUser().getType());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			mSocket.write(msg.getSerialMessage().getBytes());
 			log.info("Message sent");
 		}
