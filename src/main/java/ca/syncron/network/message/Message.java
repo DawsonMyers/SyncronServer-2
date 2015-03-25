@@ -33,8 +33,13 @@ public class Message {
 	@JsonIgnore
 	public final static Logger log = LoggerFactory.getLogger(Message.class.getName());
 	@JsonIgnore
-	public MessageProcessor mapper;
-	private Date mTimestamp;
+	public  MessageProcessor mapper;
+	private Date             mTimestamp;
+	private boolean          mDoSubsribe;
+	private boolean          mIsTargeted;
+
+
+	private MessageType mTargetMsgTag;
 
 	@JsonIgnore
 	public void initVals() {
@@ -59,6 +64,7 @@ public class Message {
 		setUser(user);
 		initUser();
 	}
+
 	public void setTimestamp(Date timestamp) {
 		mTimestamp = timestamp;
 	}
@@ -67,6 +73,21 @@ public class Message {
 		return mTimestamp;
 	}
 
+	public void setDoSubsribe(boolean doSubsribe) {
+		mDoSubsribe = doSubsribe;
+	}
+
+	public boolean getDoSubsribe() {
+		return mDoSubsribe;
+	}
+
+	public boolean getIsTargeted() {
+		return mIsTargeted;
+	}
+
+	public void setIsTargeted(boolean b) {
+		mIsTargeted = b;
+	}
 
 	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN, ACCESS, TARGET, SUBSCRIBE;}
 
@@ -645,4 +666,11 @@ public class Message {
 		mUserName = userName;
 	}
 
+	public MessageType getTargetMsgTag() {
+		return mTargetMsgTag;
+	}
+
+	public void setTargetMsgTag(MessageType targetMsgTag) {
+		mTargetMsgTag = targetMsgTag;
+	}
 }

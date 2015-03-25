@@ -127,8 +127,8 @@ public class Client extends AbstractTcpConnector {
 				//return;
 			}
 			try {
-				if (msg.getUser().getUserId() != null) msg.setUserId(msg.getUser().getUserId());
-				msg.setUserType(msg.getUser().getType());
+				//if (msg.getUser().getUserId() != null) msg.setUserId(msg.getUser().getUserId());
+				//msg.setUserType(msg.getUser().getType());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

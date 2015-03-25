@@ -108,6 +108,7 @@ public class MessageLooper {
 
 		//	executor.execute(() -> {
 		MessageType type = msg.getMessageType();
+		if (msg.getIsTargeted()) type = MessageType.TARGET;
 		log.info("Dispatching " + type + " message");
 		//log.debug("dispatchReceiveMessage", "Dispatching message");
 			switch (type) {

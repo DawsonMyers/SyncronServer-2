@@ -190,6 +190,55 @@ public class Server extends AbstractTcpConnector {
 	}
 
 	@Override
+	public void handleTargetMessage(Message msg) {
+		super.handleTargetMessage(msg);
+		//msg.setMessageType(msg.getTargetMsgTag());
+		msg.setIsTargeted(false);
+		if (mUserMap.containsKey(msg.getTargetId())) {
+			User u = mUserMap.get(msg.getTargetId());
+			msg.serializeMessage();
+			u.sendMessage(msg.getSerialMessage());
+		} else log.debug("Message target id not found");
+
+	}
+
+	@Override
+	public void handleSubscribeMessage(Message msg) {
+		super.handleSubscribeMessage(msg);
+		msg.getUser().subscribe(msg.getTargetId(), msg.getDoSubsribe());
+	}
+
+	@Override
+	public void handleQueryMessage(Message msg) {
+		super.handleQueryMessage(msg);
+	}
+
+	@Override
+	public void handleAccessMessage(Message msg) {
+		super.handleAccessMessage(msg);
+	}
+
+	@Override
+	public void sendSubscribeMessage(Message msg) {
+		super.sendSubscribeMessage(msg);
+	}
+
+	@Override
+	public void sendQueryMessage(Message msg) {
+		super.sendQueryMessage(msg);
+	}
+
+	@Override
+	public void sendErrorMessage(Message msg) {
+		super.sendErrorMessage(msg);
+	}
+
+	@Override
+	public void sendAccessMessage(Message msg) {
+		super.sendAccessMessage(msg);
+	}
+
+	@Override
 	public <T> void processMessage(T msg) { }
 
 	@Override
