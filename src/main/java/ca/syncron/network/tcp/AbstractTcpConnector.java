@@ -454,6 +454,31 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	}
 
 	@Override
+	public void handleSubscribeMessage(Message msg) {
+
+	}
+
+	@Override
+	public void handleQueryMessage(Message msg) {
+
+	}
+
+	@Override
+	public void handleUnknownMessage(Message msg) {
+
+	}
+
+	@Override
+	public void handleAccessMessage(Message msg) {
+
+	}
+
+	@Override
+	public void handleTargetMessage(Message msg) {
+
+	}
+
+	@Override
 	public void sendMessage(Message msg) {
 		log.info("sendMessage");
 //		if (mSocket != null) {
@@ -505,6 +530,41 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	@Override
 	public <T> void processMessage(T msg) {
 		log.info("processMessage");
+	}
+
+	@Override
+	public void sendSubscribeMessage(Message msg) {
+
+	}
+
+	@Override
+	public void sendUserMessage(Message msg) {
+
+	}
+
+	@Override
+	public void sendErrorMessage(Message msg) {
+
+	}
+
+	@Override
+	public void sendQueryMessage(Message msg) {
+
+	}
+
+	@Override
+	public void sendUnknownMessage(Message msg) {
+
+	}
+
+	@Override
+	public void sendAccessMessage(Message msg) {
+
+	}
+
+	@Override
+	public void sendTargetMessage(Message msg) {
+
 	}
 
 	@Override

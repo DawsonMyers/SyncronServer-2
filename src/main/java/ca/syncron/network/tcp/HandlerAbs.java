@@ -14,9 +14,9 @@ import java.util.concurrent.Executors;
 /**
  * Created by Dawson on 3/7/2015.
  */
-public class HandlerAbs extends Thread implements MessageCallbacks.DispatchCallbacks {
+public class HandlerAbs extends Thread /*implements MessageCallbacks.DispatchCallbacks*/ {
 	public final static Logger        log            = LoggerFactory.getLogger(HandlerAbs.class.getName());
-	public volatile     MessageLooper mMessageLooper = new MessageLooper(this);
+	public volatile MessageLooper mMessageLooper = new MessageLooper();
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 	static public MessageProcessor mapper;
 	public static AbstractTcpConnector mConnector;
@@ -72,7 +72,7 @@ public class HandlerAbs extends Thread implements MessageCallbacks.DispatchCallb
 	}
 
 	//  Out to socket
-	@Override
+//	@Override
 	public synchronized void sendMessage(Message msg) {
 	//	executor.execute(() -> {
 			String strMsg = null;
@@ -98,6 +98,7 @@ public class HandlerAbs extends Thread implements MessageCallbacks.DispatchCallb
 		//});
 
 	}
+/*
 
 	@Override
 	public void sendUpdateMessage(Message msg) {
@@ -194,11 +195,22 @@ public class HandlerAbs extends Thread implements MessageCallbacks.DispatchCallb
 
 	}
 
+	@Override
+	public void handleSubscribeMessage(Message msg) {
+
+	}
+
 
 	@Override
 	public <T> void processMessage(T msg) {
 
 	}
+
+	@Override
+	public void sendSubscribeMessage(Message msg) {
+
+	}
+*/
 
 	public void register(MessageCallbacks.DispatchCallbacks callbacks) {
 		mMessageLooper.register(callbacks);

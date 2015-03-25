@@ -321,32 +321,39 @@ public class User implements SocketObserver, ComConstants {
 
 	}
 
-	public static int[] getAnalogVals() {
+	//
+///////////////////////////////////////////////////////
+	public int[] getAnalogVals() {
 		return analogVals;
 	}
 
-	public static void setAnalogVals(int[] analogVals) {
+	public void setAnalogVals(int[] analogVals) {
 		User.analogVals = analogVals;
 	}
 
-	public static int[] getDigitalVals() {
+	public int[] getDigitalVals() {
 		return digitalVals;
 	}
 
-	public static void setDigitalVals(int[] digitalVals) {
+	public void setDigitalVals(int[] digitalVals) {
 		User.digitalVals = digitalVals;
 		notifySubscribers();
 	}
 
-	private static void notifySubscribers() {
+	public void notifySubscribers() {
 		List<User> users = Server.getInstance().mUsers;
+		Message msg = new Message();
+		msg.initUser(this);
+		msg.serializeMessage();
 		for (User user : users) {
 
-			if (user.getUserId()) {
-
+			if (subscribers.contains(user.getUserId())) {
+				user.sendMessage(msg.getSerialMessage());
 			}
 		}
 	}
+//
+///////////////////////////////////////////////////////
 }
 
 

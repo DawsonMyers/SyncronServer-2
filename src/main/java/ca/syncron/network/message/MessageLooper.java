@@ -144,7 +144,32 @@ public class MessageLooper {
 					log.info("dispatching Stream message");
 					mObserver.handleStreamMessage(msg);
 					break;
-
+				//
+				///////////////////////////////////////////////////////
+				case QUERY:
+					log.info("dispatching Query message");
+					mObserver.handleQueryMessage(msg);
+					break;
+				case ERROR:
+					log.info("dispatching Error message");
+					mObserver.handleErrorMessage(msg);
+					break;
+				case UNKNOWN:
+					log.info("dispatching Query message");
+					mObserver.handleUnknownMessage(msg);
+					break;
+				case ACCESS:
+					log.info("dispatching Access message");
+					mObserver.handleAccessMessage(msg);
+					break;
+				case TARGET:
+					log.info("dispatching Target message");
+					mObserver.handleTargetMessage(msg);
+					break;
+				case SUBSCRIBE:
+					log.info("dispatching Subcribe message");
+					mObserver.handleSubscribeMessage(msg);
+					break;
 				default:
 					log.error("dispatchReceiveMessage", "message could not be identified");
 					break;

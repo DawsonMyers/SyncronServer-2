@@ -54,6 +54,11 @@ public class Message {
 		}
 	}
 
+	@JsonIgnore
+	public void initUser(User user) {
+		setUser(user);
+		initUser();
+	}
 	public void setTimestamp(Date timestamp) {
 		mTimestamp = timestamp;
 	}
@@ -63,7 +68,7 @@ public class Message {
 	}
 
 
-	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN, ACCESS, TARGET;}
+	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN, ACCESS, TARGET, SUBSCRIBE;}
 
 	public enum UserType {NODE, SERVER, ANDROID, NODE_SERVER, NODE_CLIENT, UNKNOWN;}
 

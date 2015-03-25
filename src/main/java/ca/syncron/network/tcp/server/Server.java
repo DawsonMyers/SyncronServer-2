@@ -135,11 +135,13 @@ public class Server extends AbstractTcpConnector {
 				i++;
 			}
 			if (i > 0) invalidateValues(msg);
+			if (i > 0) msg.getUser().notifySubscribers();//invalidateValues(msg);
 		}
 	}
 
 	private void invalidateValues(Message msg) {
 		msg.initVals();
+		msg.getUser().notifySubscribers();
 	}
 
 	@Override
