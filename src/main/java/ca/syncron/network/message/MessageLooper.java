@@ -109,6 +109,7 @@ public class MessageLooper {
 		//	executor.execute(() -> {
 		MessageType type = msg.getMessageType();
 		if (msg.getIsTargeted()) type = MessageType.TARGET;
+		if (type == null) type = MessageType.UNKNOWN;
 		log.info("Dispatching " + type + " message");
 		//log.debug("dispatchReceiveMessage", "Dispatching message");
 			switch (type) {
@@ -156,7 +157,7 @@ public class MessageLooper {
 					mObserver.handleErrorMessage(msg);
 					break;
 				case UNKNOWN:
-					log.info("dispatching Query message");
+					log.info("dispatching Unknown message");
 					mObserver.handleUnknownMessage(msg);
 					break;
 				case ACCESS:

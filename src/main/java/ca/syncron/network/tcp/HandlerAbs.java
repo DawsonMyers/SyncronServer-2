@@ -52,9 +52,9 @@ public class HandlerAbs extends Thread /*implements MessageCallbacks.DispatchCal
 
 			}
 			else {
-				log.error("addtoReceiveQueue", "Null deserialization returned a null message");
+				log.error("Null deserialization returned a null message");
 				msg.setMessageType(Message.MessageType.ERROR);
-				log.info("addtoReceiveQueue - Null deserialization returned a null message");
+				//log.info("addtoReceiveQueue - Null deserialization returned a null message");
 			}
 		//});
 	}

@@ -25,6 +25,8 @@ public class ClientController extends AbstractController implements Runnable, Pi
 	public static ClientController me = new ClientController();
 	private boolean mSreamEnabled;
 
+	public String userName = "Client";
+
 	public String getPort() {
 		return port;
 	}

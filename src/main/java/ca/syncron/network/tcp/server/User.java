@@ -4,6 +4,7 @@
 package ca.syncron.network.tcp.server;
 
 
+import ca.syncron.network.SubscriptionService;
 import ca.syncron.network.message.Message;
 import ca.syncron.network.message.Message.UserType;
 import ca.syncron.network.message.MessageProcessor;
@@ -36,7 +37,7 @@ import static java.lang.System.out;
  * @author Dawson
  */
 // jsonMsg = {message_type: "digital", sender_type:"node",value:"0"}
-public class User implements SocketObserver, ComConstants {
+public class User implements SocketObserver, ComConstants, SubscriptionService.Subscribable {
 	public final static  Logger log                = LoggerFactory.getLogger(User.class.getName());
 	private final static long   LOGIN_TIMEOUT      = 30 * 100000;
 	private final static long   INACTIVITY_TIMEOUT = 500 * 60 * 1000;
@@ -288,10 +289,14 @@ public class User implements SocketObserver, ComConstants {
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
+
+		//  register Subscription service
+		registerSubscribable(this);
 	}
 
 	public void unregister() {
-
+		//  register Subscription service
+		unregisterSubscribable(this);
 		setRegistered(false);
 		mServer.getUserBundles().remove(getUserBundle());
 		mServer.removeUser(this);
@@ -302,6 +307,7 @@ public class User implements SocketObserver, ComConstants {
 			e.printStackTrace();
 		}
 		mServer.invalidateStatus();
+
 	}
 
 
@@ -351,6 +357,18 @@ public class User implements SocketObserver, ComConstants {
 				user.sendMessage(msg.getSerialMessage());
 			}
 		}
+	}
+
+
+	//  must register subscription service once user registration is done (user name set)
+	@Override
+	public String getSubscriptionId() {
+		return getUserId();
+	}
+
+	@Override
+	public User getUserInstance() {
+		return this;
 	}
 //
 ///////////////////////////////////////////////////////
