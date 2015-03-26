@@ -24,6 +24,28 @@ public class SubscriptionService {
 	//
 	public SubscriptionService() {}
 
+
+//  Registration
+///////////////////////////////////////////////////////
+
+	public static void register(Subscribable applicant) {
+		String id = applicant.getSubscriptionId();
+		if (!subjects.containsKey(id)) {
+			subjects.put(applicant.getSubscriptionId(), new Subscriber(applicant));
+			log.debug("New subscribable : " + id);
+		}
+	}
+
+	public static void unregister(Subscribable applicant) {
+		String id = applicant.getSubscriptionId();
+		if (subjects.containsKey(id)) {
+			log.debug("Subscribable " + id + " has unregistered");
+			subjects.remove(applicant.getSubscriptionId());
+		}
+	}
+	//  Subscriptions
+	///////////////////////////////////////////////////////
+
 	public static boolean subscribeTo(Subscribable subscriber, String targetId) {
 		if (subjects.containsKey(targetId)) {
 			Subscriber target = subjects.get(targetId);
@@ -51,27 +73,14 @@ public class SubscriptionService {
 		return false;
 	}
 
-	public static void register(Subscribable applicant) {
-		String id = applicant.getSubscriptionId();
-		if (!subjects.containsKey(id)) {
-			subjects.put(applicant.getSubscriptionId(), new Subscriber(applicant));
-			log.debug("New subscribable : " + id);
-		}
-	}
-
-	public static void unregister(Subscribable applicant) {
-		String id = applicant.getSubscriptionId();
-		if (subjects.containsKey(id)) {
-			log.debug("Subscribable " + id + " has unregistered");
-			subjects.remove(applicant.getSubscriptionId());
-		}
-	}
 
 	public static Subscriber getSubscriber(String subscriberId) {
 		if (subjects.containsKey(subscriberId)) return subjects.get(subscriberId);
 		else return null;
 	}
 
+	//  List getters
+	///////////////////////////////////////////////////////
 	public static List<User> getUserSubscribers(Subscriber s) {
 		List<User> myUsers = new ArrayList<>();
 		for (String id : s.mySubscribers) {
@@ -83,7 +92,7 @@ public class SubscriptionService {
 
 	public static List<User> getUserSubscriptions(Subscriber s) {
 		List<User> myUsers = new ArrayList<>();
-		for (String id : s.mySubscribers) {
+		for (String id : s.mySubscriptions) {
 			User u = subjects.get(id).getInstance();
 			myUsers.add(u);
 		}
@@ -136,6 +145,8 @@ public class SubscriptionService {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+
+//  Wrapper class for Subscribable interface
 class Subscriber {
 	List<String> mySubscribers   = new ArrayList<>();
 	List<String> mySubscriptions = new ArrayList<>();
