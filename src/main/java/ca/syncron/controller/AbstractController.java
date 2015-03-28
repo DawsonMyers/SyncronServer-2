@@ -24,7 +24,7 @@ public abstract class AbstractController implements RawDataAccess, Runnable {
 	public static          boolean               mConnected     = false;
 	public static          String                mServerAddress = Constants.IpAddresses.IP;
 	public                 String                mUserName      = "Not set";
-	private                ArrayList<UserBundle> mUserBundles   = new ArrayList<>();
+	public static ArrayList<UserBundle> mUserBundles = new ArrayList<>();
 
 	public AbstractController() { me = this;}
 

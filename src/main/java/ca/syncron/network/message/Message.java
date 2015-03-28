@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -89,7 +90,22 @@ public class Message {
 		mIsTargeted = b;
 	}
 
-	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN, ACCESS, TARGET, SUBSCRIBE;}
+//	public enum MessageType {DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN, ACCESS, TARGET, SUBSCRIBE;}
+
+	public enum MessageType {
+
+		DIGITAL, ANALOG, ADMIN, UPDATE, REGISTER, LOGIN, STATUS, CHECKIN, USER, STREAM, CHAT, QUERY, ERROR, UNKNOWN, ACCESS, TARGET, SUBSCRIBE;
+		public static final MessageType            values[]  = values();
+		public static       ArrayList<MessageType> arrayList = new ArrayList<MessageType>(Arrays.asList(MessageType.values()));
+
+		public static ArrayList<MessageType> getTypes() {
+			return new ArrayList<MessageType>(Arrays.asList(MessageType.values()));
+		}
+
+		public static MessageType getByIndex(int i) {
+			return values[i];
+		}
+	}
 
 	public enum UserType {NODE, SERVER, ANDROID, NODE_SERVER, NODE_CLIENT, UNKNOWN;}
 
@@ -169,7 +185,7 @@ public class Message {
 		//mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		String s = "";
 		try {
-		//	mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+			//	mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 			mapper.writeValue(writer, this);
 			s = writer.toString();
 			log.info("serializeMessage");
@@ -189,7 +205,7 @@ public class Message {
 		try {
 
 			StringWriter writer = new StringWriter();
-			ObjectMapper	mapper = new ObjectMapper();
+			ObjectMapper mapper = new ObjectMapper();
 			//setFormat(true);
 			log.info("deserializeMessage");
 

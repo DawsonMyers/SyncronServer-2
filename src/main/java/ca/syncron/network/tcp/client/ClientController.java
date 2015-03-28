@@ -2,14 +2,19 @@ package ca.syncron.network.tcp.client;
 
 import ca.syncron.boards.ArduinoConnector;
 import ca.syncron.controller.AbstractController;
-import ca.syncron.gui.ConnectionUi;
+import ca.syncron.gui.netbeans.SyncTestGui;
 import ca.syncron.network.tcp.AppRegistrar;
 import ca.syncron.utils.Interfaces.PinCallbacks;
 import ca.syncron.utils.Interfaces.PinStatus;
 import ca.syncron.utils.TestInput;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tests.ArduinoTestGui;
+import tests.TestGuiDialog;
 
 import static ca.syncron.network.message.Message.UserType.NODE;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
@@ -23,7 +28,8 @@ public class ClientController extends AbstractController implements Runnable, Pi
 	public static Client           mClient;
 	public static ArduinoConnector mArduino;
 	public static ClientController me = new ClientController();
-	private boolean mSreamEnabled;
+	private final SyncTestGui gui;
+	private       boolean     mSreamEnabled;
 
 	public String userName = "Client";
 
@@ -38,17 +44,21 @@ public class ClientController extends AbstractController implements Runnable, Pi
 	public String port = "/dev/ttyS10";
 
 	public static String getNameId() {return nameId;}
+
 	//  Constructors
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	public static SyncTestGui getGui() {
+		return SyncTestGui.getInstance();
+	}
 	public ClientController() {
-		ConnectionUi connectionPannel = new ConnectionUi();
-		connectionPannel.setVisible(true);
+//		ConnectionUi connectionPannel = new ConnectionUi();
+//		connectionPannel.setVisible(true);
 		AppRegistrar.register(this);
 		me = this;
 		setUserName("Odroid");
 		setUserType(NODE);
-
+		gui = SyncTestGui.start();
+//	Injector injector = Guice.createInjector(new
 		//TestInput test = new TestInput(this);
 		//test.input();
 	}
@@ -57,6 +67,19 @@ public class ClientController extends AbstractController implements Runnable, Pi
 		return me;
 	}
 
+	public static ClientController createInjector() {
+		return me;
+	}
+
+	public static ClientController inject() {
+		Injector injector = Guice.createInjector();
+		return me;
+	}
+
+	static ArduinoTestGui testGui;
+	@Inject
+	static TestGuiDialog  dialog;
+
 	//  main()
 ///////////////////////////////////////////////////////
 	public static void main(String[] args) {
@@ -64,6 +87,12 @@ public class ClientController extends AbstractController implements Runnable, Pi
 		(mClient = new Client(me)).start();
 		TestInput input = new TestInput(me);
 		input.input();
+//		dialog = new TestGuiDialog();
+//		TestGuiDialog dialog = new TestGuiDialog();
+//		dialog.pack();
+//		dialog.setVisible(true);
+//		dialog
+		//testGui = new ArduinoTestGui();
 
 	}
 
@@ -95,7 +124,8 @@ public class ClientController extends AbstractController implements Runnable, Pi
 	public void setPin(int pin, int state) {
 		//digitalVals[pin] = state;
 		mArduino.setPin(pin, state);
-		log.info("ClientController - mArduino.setPin({},{})",pin,state);
+		gui.setPin(pin, state);
+		log.info("ClientController - mArduino.setPin({},{})", pin, state);
 	}
 
 	@Override
