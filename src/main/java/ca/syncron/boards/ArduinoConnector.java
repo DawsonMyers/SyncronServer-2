@@ -1,6 +1,5 @@
 package ca.syncron.boards;
 
-import ca.syncron.gui.DigitalOutputGui;
 import ca.syncron.network.tcp.client.ClientController;
 import ca.syncron.utils.Constants;
 import ca.syncron.utils.Interfaces.PinCallbacks;
@@ -167,8 +166,11 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 		}
 		//Console console = new Console();
 		//console.setVisible(true);
-		DigitalOutputGui gui = new DigitalOutputGui();
-		gui.setVisible(true);
+//		DigitalOutputGui gui = new DigitalOutputGui();
+//		gui.setVisible(true);
+
+
+
 		ArduinoPins pins = new ArduinoPins(this, link, analogPinCount, digitalPinCount);
 
 	}

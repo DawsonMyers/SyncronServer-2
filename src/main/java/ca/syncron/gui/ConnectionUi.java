@@ -29,8 +29,8 @@ public class ConnectionUi extends JFrame {
 					// 1. Change Look and Feel
 					UIManager.setLookAndFeel(NimbusLookAndFeel.class.getCanonicalName());
 
-					ConnectionUi frame = new ConnectionUi();
-					frame.setVisible(true);
+					//	ConnectionUi frame = new ConnectionUi();
+					//		frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

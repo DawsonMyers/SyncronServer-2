@@ -12,15 +12,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Dawson
@@ -107,7 +105,27 @@ public class Message {
 		}
 	}
 
-	public enum UserType {NODE, SERVER, ANDROID, NODE_SERVER, NODE_CLIENT, UNKNOWN;}
+	public enum UserType {
+		NODE, SERVER, ANDROID, NODE_SERVER, NODE_CLIENT, UNKNOWN,;
+		public static final UserType              values[] = values();
+		public static       Map<String, UserType> typeMap  = new HashMap<>();
+		public static       ArrayList<UserType>   typeList = new ArrayList<UserType>(Arrays.asList(UserType.values()));
+		;
+
+		public static ArrayList<UserType> getTypes() {
+			return new ArrayList<UserType>(Arrays.asList(UserType.values()));
+		}
+
+		public static UserType getByIndex(int i) {
+			return values[i];
+		}
+
+		public static UserType getFromString(String s) {
+			for (UserType u : typeList) {
+				if (s == u.toString()) return u;
+			} return null;
+		}
+	}
 
 	public enum Chat {REGISTER, UPDATE, LOGIN, USERS, DISCONNECT, UNKNOWN;}
 
@@ -116,6 +134,7 @@ public class Message {
 	String mSerialMessage;
 	User   mTargetUser;
 
+	@Inject
 	@JsonCreator
 	public Message() {}
 
@@ -217,6 +236,7 @@ public class Message {
 		}
 		return msg;
 	}
+
 	@JsonIgnore
 	public void digital(String pin, String value) {
 		setMessageType(MessageType.DIGITAL);

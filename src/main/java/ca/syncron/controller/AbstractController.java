@@ -5,6 +5,10 @@ import ca.syncron.network.message.Message.UserType;
 import ca.syncron.network.tcp.server.UserBundle;
 import ca.syncron.utils.Constants;
 import ca.syncron.utils.Interfaces.RawDataAccess;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +30,28 @@ public abstract class AbstractController implements RawDataAccess, Runnable {
 	public                 String                mUserName      = "Not set";
 	public static ArrayList<UserBundle> mUserBundles = new ArrayList<>();
 
-	public AbstractController() { me = this;}
+	public static ObservableList<UserBundle> mUserObserver;
+
+	public AbstractController() {
+		me = this;
+		initObservers();
+	}
+
+	private void initObservers() {
+		mUserObserver = FXCollections.observableArrayList();
+		mUserObserver.addListener(new InvalidationListener() {
+			@Override
+			public void invalidated(Observable observable) {
+				log.debug("User list Invalidated");
+				String s = "\n\tConnected Users:";
+				for (UserBundle b : mUserObserver) {
+					s += "\n\t" + b.getUserId();
+				}
+				log.debug(s);
+				//printUsers();
+			}
+		});
+	}
 
 
 	public static AbstractController getInstance() {
@@ -127,8 +152,10 @@ public abstract class AbstractController implements RawDataAccess, Runnable {
 		setAnalogVals(msg.getAnalogValues());
 		setDigitalVals(msg.getDigitalValues());
 		setUserBundles(msg.getUserBundles());
-		printUsers();
-	};
+		//printUsers();
+	}
+
+	;
 
 	public void printUsers() {
 		String users = "Logged in users: ";
@@ -140,12 +167,45 @@ public abstract class AbstractController implements RawDataAccess, Runnable {
 
 
 	public void setUserBundles(ArrayList<UserBundle> userBundles) {
+		if (userBundles == null) return;
 		mUserBundles = userBundles;
-	}
-	public ArrayList<UserBundle> getUserBundles( ) {
-		return mUserBundles ;
+
+
+		mUserObserver.clear();
+		mUserObserver.addAll(userBundles);
+//		for (int i = 0; i < userBundles.size(); i++) {
+//			if (!mUserObserver.contains(userBundles.get(i))) {
+//				{
+//					mUserObserver.add(userBundles.get(i));
+//				}
+//			}
+//		}
+//		for (int i = 0; i < mUserObserver.size(); i++) {
+//			if (!userBundles.contains(mUserObserver.get(i))) {
+//				mUserObserver.remove(i);
+//			}
+//		}
+
+
+		//syncUsers();
 
 	}
 
+	private void syncUsers() {
 
+	}
+
+
+	public ArrayList<UserBundle> getUserBundles() {
+		return mUserBundles;
+
+	}
+
+	public ObservableList<UserBundle> getUserObserver() {
+		return mUserObserver;
+	}
+
+	public void setUserObserver(ObservableList<UserBundle> userObserver) {
+		mUserObserver = userObserver;
+	}
 }

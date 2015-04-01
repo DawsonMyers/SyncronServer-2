@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.embed.swing.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" fx:id="mainPane" prefHeight="647.0" prefWidth="1045.0" styleClass="background" stylesheets="@..//styles/DarkTheme.css"
+            xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fx.test.Controller">
+	<children>
+		<BorderPane prefHeight="647.0" prefWidth="1045.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+			<bottom>
+				<ToolBar fx:id="toolbarBottomMain" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+					<items>
+						<Button mnemonicParsing="false" text="Button" />
+					</items>
+				</ToolBar>
+			</bottom>
+			<top>
+				<ToolBar fx:id="toolbarTopMain" prefHeight="40.0" prefWidth="200.0" styleClass="background" BorderPane.alignment="CENTER">
+					<items>
+						<Button mnemonicParsing="false" text="Button" />
+						<SplitMenuButton mnemonicParsing="false" text="SplitMenuButton">
+							<items>
+								<MenuItem mnemonicParsing="false" text="Action 1" />
+								<MenuItem mnemonicParsing="false" text="Action 2" />
+							</items>
+						</SplitMenuButton>
+						<ToggleButton mnemonicParsing="false" text="ToggleButton" />
+					</items>
+				</ToolBar>
+			</top>
+			<center>
+				<Accordion prefHeight="400.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+					<panes>
+						<TitledPane opacity="0.83" text="Syncron">
+							<content>
+								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+									<children>
+										<BorderPane prefHeight="324.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+										            AnchorPane.topAnchor="0.0">
+											<right>
+												<SplitPane dividerPositions="0.9126506024096386" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+													<items>
+														<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+															<children>
+																<Accordion layoutX="-22.0" prefHeight="300.0" prefWidth="158.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+																           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																	<panes>
+																		<TitledPane fx:id="titlePaneUsers" text="Users">
+																			<content>
+																				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+																					<children>
+																						<ListView id="userListView" fx:id="userListView" editable="true" layoutX="-44.0" layoutY="-42.0"
+																						          mouseTransparent="true" prefHeight="224.0" prefWidth="156.0" AnchorPane.bottomAnchor="0.0"
+																						          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																							<effect>
+																								<Glow />
+																							</effect>
+																						</ListView>
+																					</children>
+																				</AnchorPane>
+																			</content>
+																			<effect>
+																				<Blend />
+																			</effect>
+																		</TitledPane>
+																		<TitledPane fx:id="titlePaneLogs" text="Logs">
+																			<content>
+																				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+																			</content>
+																			<effect>
+																				<Blend />
+																			</effect>
+																		</TitledPane>
+																	</panes>
+																</Accordion>
+															</children>
+														</AnchorPane>
+														<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="24.0" prefWidth="158.0">
+															<children>
+																<Button fx:id="btnCenter" layoutY="1.0" mnemonicParsing="false" onAction="#hello" prefHeight="34.0" prefWidth="162.0" text="Button" />
+															</children>
+														</AnchorPane>
+													</items>
+												</SplitPane>
+											</right>
+											<left>
+												<SplitPane dividerPositions="0.8133333333333334" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+													<items>
+														<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+															<children>
+																<Accordion prefHeight="163.0" prefWidth="158.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+																           AnchorPane.topAnchor="0.0">
+																	<panes>
+																		<TitledPane text="Info">
+																			<content>
+																				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+																					<children>
+																						<ScrollPane layoutX="-22.0" layoutY="-12.0" prefHeight="263.0" prefWidth="156.0" AnchorPane.bottomAnchor="0.0"
+																						            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+																					</children>
+																				</AnchorPane>
+																			</content>
+																			<effect>
+																				<Blend />
+																			</effect>
+																		</TitledPane>
+																		<TitledPane prefHeight="361.0" prefWidth="158.0" text="Connection">
+																			<content>
+																				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="340.0" prefWidth="156.0">
+																					<children>
+																						<TreeTableView layoutX="-22.0" layoutY="14.0" prefHeight="313.0" prefWidth="156.0" AnchorPane.bottomAnchor="0.0"
+																						               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																							<columns>
+																								<TreeTableColumn fx:id="tblConnection" prefWidth="67.00003397464752" text="C1" />
+																								<TreeTableColumn prefWidth="82.99998474121094" text="C2" />
+																							</columns>
+																						</TreeTableView>
+																					</children>
+																				</AnchorPane>
+																			</content>
+																		</TitledPane>
+																	</panes>
+																</Accordion>
+															</children>
+														</AnchorPane>
+														<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="110.0" prefWidth="158.0">
+
+															<children>
+																<Button fx:id="btnConnect" layoutX="3.0" maxHeight="30.0" mnemonicParsing="false" onAction="#connectClick" prefHeight="30.0"
+																        prefWidth="153.0" text="Connect" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="2.0" />
+																<Button fx:id="btnDisconnect" layoutX="2.0" layoutY="41.0" maxHeight="30.0" mnemonicParsing="false" onAction="#disconnectClick"
+																        prefHeight="30.0" prefWidth="155.0" text="Disconnect" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" />
+															</children>
+														</AnchorPane>
+													</items>
+												</SplitPane>
+											</left>
+											<center>
+												<AnchorPane BorderPane.alignment="CENTER">
+													<children>
+														<SplitPane dividerPositions="0.6628571428571428" layoutX="72.0" layoutY="49.0" orientation="VERTICAL" prefHeight="334.0" prefWidth="280.0"
+														           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+															<items>
+																<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+																	<children>
+																		<Accordion fx:id="centerPane" layoutX="38.0" layoutY="65.0" prefHeight="300.0" prefWidth="278.0" AnchorPane.bottomAnchor="0.0"
+																		           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																			<panes>
+																				<TitledPane fx:id="paneDigital" text="Digital">
+																					<content>
+																						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+																							<children>
+																								<GridPane layoutX="25.0" layoutY="26.0" maxHeight="180.0" maxWidth="370.0" prefHeight="180.0"
+																								          prefWidth="370.0">
+																									<columnConstraints>
+																										<ColumnConstraints hgrow="SOMETIMES" maxWidth="35.0" minWidth="30.0" prefWidth="30.0" />
+																										<ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="70.0" prefWidth="150.0" />
+																										<ColumnConstraints hgrow="SOMETIMES" maxWidth="35.0" minWidth="30.0" prefWidth="30.0" />
+																										<ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="70.0" prefWidth="150.0" />
+																									</columnConstraints>
+																									<rowConstraints>
+																										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+																										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+																										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+																										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+																										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+																										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+																									</rowConstraints>
+																									<children>
+																										<Label fx:id="lblDigital0" prefHeight="24.0" prefWidth="120.0" text="Digital 0"
+																										       GridPane.columnIndex="1" />
+																										<Label fx:id="lblDigital1" prefHeight="24.0" prefWidth="120.0" text="Digital 1"
+																										       GridPane.columnIndex="1" GridPane.rowIndex="1" />
+																										<Label fx:id="lblDigital2" prefHeight="24.0" prefWidth="120.0" text="Digital 2"
+																										       GridPane.columnIndex="1" GridPane.rowIndex="2" />
+																										<Label fx:id="lblDigital3" prefHeight="24.0" prefWidth="120.0" text="Digital 3"
+																										       GridPane.columnIndex="1" GridPane.rowIndex="3" />
+																										<Label fx:id="lblDigital4" prefHeight="24.0" prefWidth="120.0" text="Digital 4"
+																										       GridPane.columnIndex="1" GridPane.rowIndex="4" />
+																										<Rectangle fx:id="digitalIndicator0" arcHeight="5.0" arcWidth="5.0" fill="#47ed45" height="20.0"
+																										           onMouseClicked="#digitalClicked" stroke="#f0f4f5" strokeType="INSIDE" width="20.0" />
+																										<Rectangle fx:id="digitalIndicator1" arcHeight="5.0" arcWidth="5.0" fill="#47ed45" height="20.0"
+																										           onMouseClicked="#digitalClicked" stroke="#f0f4f5" strokeType="INSIDE" width="20.0"
+																										           GridPane.rowIndex="1" />
+																										<Rectangle fx:id="digitalIndicator2" arcHeight="5.0" arcWidth="5.0" fill="#47ed45" height="20.0"
+																										           onMouseClicked="#digitalClicked" stroke="#f0f4f5" strokeType="INSIDE" width="20.0"
+																										           GridPane.rowIndex="2" />
+																										<Rectangle fx:id="digitalIndicator3" arcHeight="5.0" arcWidth="5.0" fill="#47ed45" height="20.0"
+																										           onMouseClicked="#digitalClicked" stroke="#f0f4f5" strokeType="INSIDE" width="20.0"
+																										           GridPane.rowIndex="3" />
+																										<Rectangle fx:id="digitalIndicator4" arcHeight="5.0" arcWidth="5.0" fill="#47ed45" height="20.0"
+																										           onMouseClicked="#digitalClicked" stroke="#f0f4f5" strokeType="INSIDE" width="20.0"
+																										           GridPane.rowIndex="4" />
+																										<Rectangle fx:id="digitalIndicator5" arcHeight="5.0" arcWidth="5.0" fill="#47ed45" height="20.0"
+																										           onMouseClicked="#digitalClicked" stroke="#f0f4f5" strokeType="INSIDE" width="20.0"
+																										           GridPane.rowIndex="5" />
+																										<Rectangle fx:id="digitalIndicator6" arcHeight="5.0" arcWidth="5.0" fill="#47ed45" height="20.0"
+																										           stroke="#f0f4f5" strokeType="INSIDE" width="20.0" GridPane.columnIndex="2" />
+																										<Rectangle fx:id="digitalIndicator7" arcHeight="5.0" arcWidth="5.0" fill="#47ed45" height="20.0"
+																										           stroke="#f0f4f5" strokeType="INSIDE" width="20.0" GridPane.columnIndex="2"
+																										           GridPane.rowIndex="1" />
+																										<Rectangle fx:id="digitalIndicator8" arcHeight="5.0" arcWidth="5.0" fill="#47ed45" height="20.0"
+																										           stroke="#f0f4f5" strokeType="INSIDE" width="20.0" GridPane.columnIndex="2"
+																										           GridPane.rowIndex="2" />
+																										<Rectangle fx:id="digitalIndicator9" arcHeight="5.0" arcWidth="5.0" fill="#47ed45" height="20.0"
+																										           stroke="#f0f4f5" strokeType="INSIDE" width="20.0" GridPane.columnIndex="2"
+																										           GridPane.rowIndex="3" />
+																										<Label fx:id="lblDigital5" prefHeight="24.0" prefWidth="120.0" text="Digital 5"
+																										       GridPane.columnIndex="1" GridPane.rowIndex="5" />
+																										<Rectangle fx:id="digitalIndicator11" arcHeight="5.0" arcWidth="5.0" fill="#47ed45"
+																										           height="20.0" stroke="#f0f4f5" strokeType="INSIDE" width="20.0"
+																										           GridPane.columnIndex="2" GridPane.rowIndex="5" />
+																										<Rectangle fx:id="digitalIndicator10" arcHeight="5.0" arcWidth="5.0" fill="#47ed45"
+																										           height="20.0" stroke="#f0f4f5" strokeType="INSIDE" width="20.0"
+																										           GridPane.columnIndex="2" GridPane.rowIndex="4" />
+																										<Label fx:id="lblDigital8" prefHeight="24.0" prefWidth="120.0" text="Digital 8"
+																										       GridPane.columnIndex="3" GridPane.rowIndex="2" />
+																										<Label fx:id="lblDigital6" prefHeight="24.0" prefWidth="120.0" text="Digital 6"
+																										       GridPane.columnIndex="3" />
+																										<Label fx:id="lblDigital7" prefHeight="24.0" prefWidth="120.0" text="Digital 7"
+																										       GridPane.columnIndex="3" GridPane.rowIndex="1" />
+																										<Label fx:id="lblDigital11" prefHeight="24.0" prefWidth="120.0" text="Digital 11"
+																										       GridPane.columnIndex="3" GridPane.rowIndex="5" />
+																										<Label fx:id="lblDigital9" prefHeight="24.0" prefWidth="120.0" text="Digital 9"
+																										       GridPane.columnIndex="3" GridPane.rowIndex="3" />
+																										<Label fx:id="lblDigital10" prefHeight="24.0" prefWidth="120.0" text="Digital 10"
+																										       GridPane.columnIndex="3" GridPane.rowIndex="4" />
+																									</children>
+																								</GridPane>
+																							</children>
+																						</AnchorPane>
+																					</content>
+																					<effect>
+																						<Blend />
+																					</effect>
+																				</TitledPane>
+																				<TitledPane fx:id="titlePaneAnalog" text="Analog">
+																					<content>
+																						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+																							<children>
+																								<LineChart fx:id="graphAnalog" layoutX="7.0" layoutY="-108.0" prefHeight="244.0" prefWidth="700.0"
+																								           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+																								           AnchorPane.topAnchor="0.0">
+																									<xAxis>
+																										<CategoryAxis side="BOTTOM" />
+																									</xAxis>
+																									<yAxis>
+																										<NumberAxis side="LEFT" />
+																									</yAxis>
+																								</LineChart>
+																							</children>
+																						</AnchorPane>
+																					</content>
+																					<effect>
+																						<Blend />
+																					</effect>
+																				</TitledPane>
+																			</panes>
+																			<effect>
+																				<Blend />
+																			</effect>
+																		</Accordion>
+																	</children>
+																</AnchorPane>
+																<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+																	<children>
+																		<TabPane fx:id="tabPaneMessaging" layoutY="-59.0" prefHeight="132.0" prefWidth="441.0" tabClosingPolicy="UNAVAILABLE"
+																		         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																			<tabs>
+																				<Tab text="Messaging">
+																					<content>
+																						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+																							<children>
+																								<SplitPane dividerPositions="0.29797979797979796" layoutX="206.0" layoutY="-61.0" prefHeight="103.0"
+																								           prefWidth="441.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+																								           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																									<items>
+																										<AnchorPane maxWidth="180.0" minHeight="0.0" minWidth="100.0" prefHeight="160.0"
+																										            prefWidth="100.0">
+																											<children>
+																												<Button fx:id="btnSend" layoutX="12.0" layoutY="20.0" maxHeight="30.0" maxWidth="180.0"
+																												        mnemonicParsing="false" onAction="#sendClicked" prefHeight="25.0"
+																												        prefWidth="180.0" text="Send" AnchorPane.leftAnchor="5.0"
+																												        AnchorPane.rightAnchor="5.0" />
+																												<Button layoutX="24.0" layoutY="59.0" maxHeight="30.0" maxWidth="180.0"
+																												        mnemonicParsing="false" prefHeight="25.0" prefWidth="180.0" text="Button"
+																												        AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+																											</children>
+																											<effect>
+																												<Bloom />
+																											</effect>
+																										</AnchorPane>
+																										<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="101.0" prefWidth="114.0">
+																											<children>
+																												<TableView fx:id="tblMessage" prefHeight="101.0" prefWidth="305.0"
+																												           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+																												           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+																													<columns>
+																														<TableColumn fx:id="msgColFields" prefWidth="152.0" text="C1" />
+																														<TableColumn fx:id="msgColValues" prefWidth="153.00003051757812" text="C2" />
+																													</columns>
+																													<effect>
+																														<Bloom />
+																													</effect>
+																												</TableView>
+																											</children>
+																										</AnchorPane>
+																									</items>
+																								</SplitPane>
+																							</children>
+																						</AnchorPane>
+																					</content>
+																				</Tab>
+																				<Tab text="Untitled Tab 2">
+																					<content>
+																						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+																					</content>
+																				</Tab>
+																			</tabs>
+																		</TabPane>
+																	</children>
+																</AnchorPane>
+															</items>
+														</SplitPane>
+													</children>
+												</AnchorPane>
+											</center>
+										</BorderPane>
+									</children>
+								</AnchorPane>
+							</content>
+							<effect>
+								<Blend />
+							</effect>
+						</TitledPane>
+						<TitledPane text="untitled">
+							<content>
+								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+									<children>
+										<BorderPane prefHeight="516.0" prefWidth="1043.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+										            AnchorPane.topAnchor="0.0">
+											<center>
+												<TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+													<tabs>
+														<Tab text="Untitled Tab 1">
+															<content>
+																<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+																	<children>
+																		<TreeTableView layoutX="66.0" layoutY="82.0" prefHeight="305.0" prefWidth="300.0">
+																			<columns>
+																				<TreeTableColumn prefWidth="75.0" text="C1" />
+																				<TreeTableColumn prefWidth="75.0" text="C2" />
+																			</columns>
+																		</TreeTableView>
+																		<CheckBox layoutX="380.0" layoutY="140.0" mnemonicParsing="false" text="CheckBox" />
+																		<TextField layoutX="475.0" layoutY="204.0" />
+																	</children>
+																</AnchorPane>
+															</content>
+														</Tab>
+														<Tab text="Untitled Tab 2">
+															<content>
+																<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+															</content>
+														</Tab>
+													</tabs>
+												</TabPane>
+											</center>
+										</BorderPane>
+									</children>
+								</AnchorPane>
+							</content>
+							<effect>
+								<Blend />
+							</effect>
+						</TitledPane>
+					</panes>
+				</Accordion>
+			</center>
+		</BorderPane>
+	</children>
+</AnchorPane>

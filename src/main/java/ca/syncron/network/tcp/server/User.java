@@ -161,7 +161,8 @@ public class User implements SocketObserver, ComConstants, SubscriptionService.S
 //		}
 		// Remove the user.
 		unregister();
-
+		log.debug(getUserId() + " Disconnected");
+		mServer.invalidateStatus();
 	}
 
 	private void scheduleInactivityEvent() {

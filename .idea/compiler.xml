@@ -27,11 +27,11 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="myapp1" />
-        <module name="Server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
       <module name="Server" target="1.8" />
+      <module name="SyncronFx" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

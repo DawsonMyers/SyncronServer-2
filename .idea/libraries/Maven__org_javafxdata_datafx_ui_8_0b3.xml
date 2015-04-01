@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.javafxdata:datafx-ui:8.0b3">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/javafxdata/datafx-ui/8.0b3/datafx-ui-8.0b3.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/javafxdata/datafx-ui/8.0b3/datafx-ui-8.0b3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/javafxdata/datafx-ui/8.0b3/datafx-ui-8.0b3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

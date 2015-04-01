@@ -1,0 +1,6 @@
+#btnCenter {
+    /*-fx-font-size: 2.0em;*/
+    -fx-border-color: darkgrey;
+    -fx-border-radius: 4px;
+    -fx-effect: dropshadow(gaussian, gray, 1, 1.0, 1, 1);
+}
