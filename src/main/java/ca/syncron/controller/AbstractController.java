@@ -5,8 +5,10 @@ import ca.syncron.network.message.Message.UserType;
 import ca.syncron.network.tcp.server.UserBundle;
 import ca.syncron.utils.Constants;
 import ca.syncron.utils.Interfaces.RawDataAccess;
+import fx.eventbus.EventBus;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
@@ -32,12 +34,16 @@ public abstract class AbstractController implements RawDataAccess, Runnable {
 
 	public static ObservableList<UserBundle> mUserObserver;
 
+	public static SimpleBooleanProperty connectedProperty = new SimpleBooleanProperty(mConnected);
+
 	public AbstractController() {
 		me = this;
+		EventBus.getBus().register(this);
 		initObservers();
 	}
 
 	private void initObservers() {
+
 		mUserObserver = FXCollections.observableArrayList();
 		mUserObserver.addListener(new InvalidationListener() {
 			@Override
@@ -173,16 +179,26 @@ public abstract class AbstractController implements RawDataAccess, Runnable {
 
 		mUserObserver.clear();
 		mUserObserver.addAll(userBundles);
+//		for (int i = 0; i < mUserObserver.size(); i++) {
+//			if (!userBundles.contains(mUserObserver.get(i).getUserId())) {
+//				mUserObserver.remove(i);
+//			}
+//		}
 //		for (int i = 0; i < userBundles.size(); i++) {
-//			if (!mUserObserver.contains(userBundles.get(i))) {
+//			if (!mUserObserver.contains(userBundles.get(i).getUserId())) {
 //				{
 //					mUserObserver.add(userBundles.get(i));
 //				}
 //			}
 //		}
+//		String id = "";
+//		String id1 = "";
 //		for (int i = 0; i < mUserObserver.size(); i++) {
-//			if (!userBundles.contains(mUserObserver.get(i))) {
-//				mUserObserver.remove(i);
+//			id = mUserObserver.get(i).getUserId();
+//			for (int j = 0; j < userBundles.size(); j++) {
+//				id1 = userBundles.get(j).getUserId();
+//				if (id == id1)  continue;
+//
 //			}
 //		}
 
@@ -207,5 +223,17 @@ public abstract class AbstractController implements RawDataAccess, Runnable {
 
 	public void setUserObserver(ObservableList<UserBundle> userObserver) {
 		mUserObserver = userObserver;
+	}
+
+	public static boolean getConnectedProperty() {
+		return connectedProperty.get();
+	}
+
+	public static SimpleBooleanProperty connectedProperty() {
+		return connectedProperty;
+	}
+
+	public static void setConnectedProperty(boolean connectedProperty) {
+		AbstractController.connectedProperty.set(connectedProperty);
 	}
 }

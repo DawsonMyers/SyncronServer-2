@@ -13,13 +13,8 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/../SyncronApp/pom.xml" />
+        <option value="$SYNCRON_HOME$/SyncronApp/pom.xml" />
       </list>
-    </option>
-    <option name="ignoredFiles">
-      <set>
-        <option value="$PROJECT_DIR$/SyncronFx_0/pom.xml" />
-      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
@@ -28,4 +23,5 @@
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>
+  <component name="WebServicesPlugin" addRequiredLibraries="true" />
 </project>

@@ -17,12 +17,12 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/ch/qos/logback/logback-classic/1.1.2/logback-classic-1.1.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.4.4/jackson-databind-2.4.4.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/aspectj/aspectjrt/1.8.4/aspectjrt-1.8.4.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNew/ardulink.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNew/RXTXcomm.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNew/bluecove-2.1.0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNew/ardulink_javadoc.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNew/ch.ntb.usb-0.5.9.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="D:/Java/Libs/ardulink/ArdulinkNew/javax.mail-1.5.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$JAVA_LIB$/ardulink/ArdulinkNew/ardulink.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$JAVA_LIB$/ardulink/ArdulinkNew/RXTXcomm.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$JAVA_LIB$/ardulink/ArdulinkNew/bluecove-2.1.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$JAVA_LIB$/ardulink/ArdulinkNew/ardulink_javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$JAVA_LIB$/ardulink/ArdulinkNew/ch.ntb.usb-0.5.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$JAVA_LIB$/ardulink/ArdulinkNew/javax.mail-1.5.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-annotations/2.4.4/jackson-annotations-2.4.4.jar" path-in-jar="/" />
       <element id="extracted-dir" path="D:/AppProjects/Android/Syncron/App/app/libs/naga-debug-3_0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/codesnippets4all/quick-json/1.0.4/quick-json-1.0.4.jar" path-in-jar="/" />

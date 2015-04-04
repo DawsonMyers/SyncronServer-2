@@ -56,6 +56,21 @@ public class Constants {
 		}
 	}
 
-	public enum Access {GUEST, USER, ELEVATED, ADMIN;}
+	public enum Access {
+		GUEST("GUEST"), USER("USER"), ELEVATED("ELEVATED"), ADMIN("ADMIN");
+		String name;
+
+		Access() {
+		}
+
+
+		public String getString() {
+			return name;
+		}
+
+		Access(String n) {
+			name = n;
+		}
+	}
 
 }

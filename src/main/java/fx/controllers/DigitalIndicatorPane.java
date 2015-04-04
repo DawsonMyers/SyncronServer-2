@@ -1,7 +1,7 @@
 package fx.controllers;
 
 import fx.eventbus.EventBus;
-import fx.test.IndicatorTestApp;
+import fx.test.TestController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -35,20 +35,21 @@ import static java.lang.System.out;
 public class DigitalIndicatorPane extends FlowPane /*implements Initializable*/ {
 	static              String           nameId = DigitalIndicatorPane.class.getSimpleName();
 	public final static org.slf4j.Logger log    = org.slf4j.LoggerFactory.getLogger(nameId);
+	AnchorPane aPane;
 
 	String fxmlLocation = "/fx/fxml/indicator-digital.fxml";
 	ObservableList<Indicator> indicators;
 	public List<Indicator> list = new ArrayList<>();
-	Application app;
-
+	Application    app;
+	TestController testController;
 	String GREEN      = "#47ed45";
 	String stroke     = "#f0f4f5";
 	String strokeType = "INSIDE";
 	String arcHeight  = "5.0";
 	String arcWidth   = "5.0";
 
-	public DigitalIndicatorPane(IndicatorTestApp indicatorTestApp) {
-		app = indicatorTestApp;
+
+	public DigitalIndicatorPane() {
 		initList();
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlLocation));
 		fxmlLoader.setRoot(this);
@@ -61,7 +62,24 @@ public class DigitalIndicatorPane extends FlowPane /*implements Initializable*/ 
 		}
 	}
 
+	public DigitalIndicatorPane(Application testApp) {
+		this();
+		app = testApp;
+
+	}
+
+	public DigitalIndicatorPane(AnchorPane pane) {
+		aPane = pane;
+	}
+
+	public DigitalIndicatorPane(TestController testController) {
+		this();
+		this.testController = testController;
+
+	}
+
 	void initList() {
+		flowPane = new FlowPane();
 		indicators = FXCollections.observableList(list);
 
 		indicators.addListener(new ListChangeListener() {
@@ -86,8 +104,15 @@ public class DigitalIndicatorPane extends FlowPane /*implements Initializable*/ 
 		});
 
 		list.add(indicator);
-		flowPane.getChildren().add(indicator);
+		if (flowPane == null) initPane();
+		getChildren().add(indicator);
 		out.println("Indicator #" + list.size() + " added to panel");
+	}
+
+	private void initPane() {
+		flowPane = new FlowPane();
+		flowPane.prefHeightProperty().bind(aPane.heightProperty());
+		flowPane.prefWidthProperty().bind(aPane.widthProperty());
 	}
 
 

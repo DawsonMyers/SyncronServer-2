@@ -1,4 +1,4 @@
-package main.java.fx.controls;
+package fx.controls;
 
 import javafx.beans.property.adapter.JavaBeanProperty;
 import javafx.collections.FXCollections;

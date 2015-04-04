@@ -1,9 +1,17 @@
 package fx.test;
 
+import ca.syncron.controller.AbstractController;
 import ca.syncron.network.message.Message;
 import ca.syncron.network.tcp.client.ClientController;
 import ca.syncron.network.tcp.server.UserBundle;
+import com.google.common.eventbus.Subscribe;
+import fx.controllers.DigitalIndicatorPane;
+import fx.eventbus.EventBus;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,7 +24,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.net.URL;
@@ -39,13 +49,71 @@ public class TestController implements Initializable {
 	public static ObservableList   userData;
 	static        ClientController mClient;
 
+	Color GREEN1 = Color.valueOf("1fff93");
+	Color RED1   = Color.RED;
+	private static AbstractController    mController       = AbstractController.getInstance();
+	public static  SimpleBooleanProperty connectedProperty = new SimpleBooleanProperty(false);
+	//mController.connectedProperty();
+	EventBus bus = EventBus.getBus();
+	public static UserBundle selectedUser;
+
 	public TestController() {
+		bus.register(this);
 	}
 
 	ObservableList<MsgEntry> data = FXCollections.observableArrayList();
+	@FXML
+	Rectangle  conIndicator;
+	@FXML
+	Label      conLabel;
+	@FXML
+	AnchorPane controlTabAncPane;
+
+	@Subscribe
+	public void connectionStatus(EventBus.ConnectionEvent e) {
+//		if (e.isConnected()) {
+//			conIndicator.setFill(GREEN1);
+//		} else conIndicator.setFill(RED1);
+		updateConnection(e.isConnected());
+	}
+
+	public void setConnectionStatus(boolean b) {
+		if (b) {
+			conIndicator.setFill(GREEN1);
+		} else conIndicator.setFill(RED1);
+	}
+
+	public void updateConnection() {
+		Platform.runLater(() -> setConnectionStatus(mController.mConnected));
+	}
+
+	public void updateConnection(boolean b) {
+		Platform.runLater(() -> setConnectionStatus(b));
+	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		bus.register(this);
+		connectedProperty.bind(mController.connectedProperty());
+		Platform.runLater(() -> setConnectionStatus(mController.mConnected));
+		//conIndicator.setFill(RED1);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				connectedProperty.addListener(new ChangeListener<Boolean>() {
+					@Override
+					public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+
+						updateConnection(newValue);
+//						if (newValue) {
+//							conIndicator.setFill(GREEN1);
+//						} else conIndicator.setFill(RED1);
+					}
+				});
+
+			}
+		});
+
 		mClient = ClientController.getInstance();
 		userData = mClient.getUserObserver();
 //		userIdCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("userId"));
@@ -76,7 +144,22 @@ public class TestController implements Initializable {
 		initList();
 		initTable();
 		initUserTable(userTable1);
+		initControls();
+	}
 
+	private void initControls() {
+		AnchorPane pane = bottomAnchorPane;
+		DigitalIndicatorPane digiPane = new DigitalIndicatorPane(this);
+		pane.getChildren().add(digiPane);
+		digiPane.setPrefWidth(pane.getPrefWidth());
+		digiPane.setPrefHeight(pane.getPrefHeight());
+		digiPane.createIndicator("Dawson");
+
+		Button btnAdd = new Button("Add");
+
+		digiPane.getChildren().add(btnAdd);
+
+		btnAdd.setOnAction(event -> digiPane.createIndicator("Digital"));
 	}
 
 	private void genNewRow() {
@@ -164,52 +247,66 @@ public class TestController implements Initializable {
 	void initUserTable(TableView<UserBundle> u) {
 
 		userIdCol1.setCellValueFactory(new PropertyValueFactory<UserBundle, String>("userId"));
-		//typeCol.setCellValueFactory(new PropertyValueFactory<UserBundle, String>("type"));
+		typeCol.setCellValueFactory(new PropertyValueFactory<UserBundle, String>("type"));
 		nameCol.setCellValueFactory(new PropertyValueFactory<UserBundle, String>("name"));
 		timestampCol.setCellValueFactory(new PropertyValueFactory<UserBundle, String>("timestamp"));
 		accessCol.setCellValueFactory(new PropertyValueFactory<UserBundle, String>("access"));
 
 
-		//userIdCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
-		userIdCol1.setCellFactory(TextFieldTableCell.forTableColumn());
-		userIdCol1.setOnEditCommit(
-				t -> ((UserBundle) t.getTableView().getItems().get(
-						t.getTablePosition().getRow())
-				).setUserId(t.getNewValue())
-		                          );
-		//msgTypeCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
-		typeCol.setCellFactory(TextFieldTableCell.forTableColumn());
-		typeCol.setOnEditCommit(
-				t -> ((UserBundle) t.getTableView().getItems().get(
-						t.getTablePosition().getRow())
-				).setUserType(t.getNewValue())
-		                       );
-		//pinCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
-		nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
-		nameCol.setOnEditCommit(
-				t -> ((UserBundle) t.getTableView().getItems().get(
-						t.getTablePosition().getRow())
-				).setName(t.getNewValue())
-		                       );
-		//valueCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
-		timestampCol.setCellFactory(TextFieldTableCell.forTableColumn());
-		timestampCol.setOnEditCommit(
-				t -> ((UserBundle) t.getTableView().getItems().get(
-						t.getTablePosition().getRow())
-				).setTimeProp(t.getNewValue())
-		                            );
-		//chatCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
-		accessCol.setCellFactory(TextFieldTableCell.forTableColumn());
-		accessCol.setOnEditCommit(
-				t -> ((UserBundle) t.getTableView().getItems().get(
-						t.getTablePosition().getRow())
-				).setAccessProp(t.getNewValue())
-		                         );
+//		//userIdCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
+//		userIdCol1.setCellFactory(TextFieldTableCell.forTableColumn());
+//		userIdCol1.setOnEditCommit(
+//				t -> ((UserBundle) t.getTableView().getItems().get(
+//						t.getTablePosition().getRow())
+//				).setUserId(t.getNewValue())
+//		                          );
+//		//msgTypeCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
+//		typeCol.setCellFactory(TextFieldTableCell.forTableColumn());
+//		typeCol.setOnEditCommit(
+//				t -> ((UserBundle) t.getTableView().getItems().get(
+//						t.getTablePosition().getRow())
+//				).setUserType(t.getNewValue())
+//		                       );
+//		//pinCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
+//		nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+//		nameCol.setOnEditCommit(
+//				t -> ((UserBundle) t.getTableView().getItems().get(
+//						t.getTablePosition().getRow())
+//				).setName(t.getNewValue())
+//		                       );
+//		//valueCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
+//		timestampCol.setCellFactory(TextFieldTableCell.forTableColumn());
+//		timestampCol.setOnEditCommit(
+//				t -> ((UserBundle) t.getTableView().getItems().get(
+//						t.getTablePosition().getRow())
+//				).setTimeProp(t.getNewValue())
+//		                            );
+//		//chatCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
+//		accessCol.setCellFactory(TextFieldTableCell.forTableColumn());
+//		accessCol.setOnEditCommit(
+//				t -> ((UserBundle) t.getTableView().getItems().get(
+//						t.getTablePosition().getRow())
+//				).setAccessProp(t.getNewValue())
+//		                         );
 
 		// create the data
 		userTable1.setItems(userData); // assign the data to the table
 		userTable1.setEditable(true);
 	}
+
+	@FXML
+	ListView<UserBundle> userList1;
+	@FXML
+	Label                nameDet;
+	@FXML
+	Label                accessDet;
+	@FXML
+	Label                timeDet;
+	@FXML
+	Label                typeDet;
+	@FXML
+	GridPane             detailsGrid;
+
 
 	public void initList() {
 		//userList = new ListView<String>();
@@ -217,9 +314,10 @@ public class TestController implements Initializable {
 //				"Single", "Double", "Suite", "Family App");
 //		userList.setItems(items);
 
-		userList.setItems(FXCollections.observableArrayList("Item1", "Item2", "Item3", "Item4"));
+
+		userList1.setItems(FXCollections.observableArrayList(userData));
 //		userList.setItems(FXCollections.observableArrayList("Item1", "Item2", "Item3", "Item4"));
-		userList.setEditable(true);
+		userList1.setEditable(true);
 
 		userList.setCellFactory(TextFieldListCell.forListView());
 
@@ -231,15 +329,42 @@ public class TestController implements Initializable {
 			}
 
 		});
+//		userList.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent e) {
+//				UserBundle u = (UserBundle) userList.getSelectionModel().getSelectedItem();
+//				out.println("List clicked");
+//
+//				nameDet.setText(u.getName());
+//				accessDet.setText(u.getAccessProp());
+//				timeDet.setText(u.getTimeProp());
+//				typeDet.setText(u.getTypeProp());
+//			}
+//
+//		});
+//		userList.setItems(FXCollections.observableArrayList("Item1", "Item2", "Item3", "Item4"));
+////		userList.setItems(FXCollections.observableArrayList("Item1", "Item2", "Item3", "Item4"));
+//		userList.setEditable(true);
+//
+//		userList.setCellFactory(TextFieldListCell.forListView());
+//
+//		userList.setOnEditCommit(new EventHandler<ListView.EditEvent<String>>() {
+//			@Override
+//			public void handle(ListView.EditEvent<String> t) {
+//				userList.getItems().set(t.getIndex(), t.getNewValue());
+//				out.println("setOnEditCommit");
+//			}
+//
+//		});
 
-		userList.setOnEditCancel(new EventHandler<ListView.EditEvent<String>>() {
-			@Override
-			public void handle(ListView.EditEvent<String> t) {
-				out.println("setOnEditCancel");
+//		userList.setOnEditCancel(new EventHandler<ListView.EditEvent<String>>() {
+//			@Override
+//			public void handle(ListView.EditEvent<String> t) {
+//				out.println("setOnEditCancel");
+//			}
+//		});
+
 			}
-		});
-
-	}
 
 	@FXML
 	public  TitledPane statesPane;
@@ -389,8 +514,23 @@ public class TestController implements Initializable {
 
 	}
 
+	@FXML
+	AnchorPane bottomAnchorPane;
+
 	public void listClicked(Event event) {
-		out.println(((ListView<String>) event.getSource()).getSelectionModel().getSelectedItem());
+		out.println("List Clicked");
+
+		UserBundle u;
+		ListView<UserBundle> lv = (ListView<UserBundle>) event.getSource();
+		u = (UserBundle) lv.getSelectionModel().getSelectedItem();
+		out.println("List clicked");
+
+		nameDet.setText(u.getName());
+		accessDet.setText(u.getAccessProp());
+		timeDet.setText(u.getTimeProp());
+		typeDet.setText(u.getTypeProp());
+//		out.println(
+//				((ListView<String>) event.getSource()).getSelectionModel().getSelectedItem());
 	}
 
 

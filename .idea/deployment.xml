@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="Odroid">
+  <component name="PublishConfigData" serverName="GlassFish">
     <serverData>
+      <paths name="GlassFish">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$/out/artifacts/Server_Web_exploded/WEB-INF" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="Odroid">
         <serverdata>
           <mappings>

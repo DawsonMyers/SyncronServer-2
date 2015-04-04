@@ -8,6 +8,8 @@ import ca.syncron.network.tcp.server.UserBundle;
 import ca.syncron.utils.ComConstants;
 import ca.syncron.utils.Constants;
 import ca.syncron.utils.Interfaces;
+import fx.eventbus.EventBus;
+import javafx.beans.property.SimpleBooleanProperty;
 import naga.*;
 import naga.eventmachine.EventMachine;
 import naga.packetreader.AsciiLinePacketReader;
@@ -62,6 +64,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	public NIOSocket mSocket;
 	public boolean   mConnected;
 
+	public static SimpleBooleanProperty connectedProperty = mController.connectedProperty();
 
 	public boolean isReconnecting() {
 		return reconnecting;
@@ -88,6 +91,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	// ///////////////////////////////////////////////////////////////////////////////////
 	public AbstractTcpConnector() {
 		me = this;
+		mConnected = mController.mConnected;
 		//mEventMachine = machine;
 		AppRegistrar.register(this);
 		mUsers = new ArrayList<User>();
@@ -154,7 +158,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 				mSocket.setPacketReader(new AsciiLinePacketReader());
 				mSocket.setPacketWriter(new AsciiLinePacketWriter());
 				machine.start();
-				if (mSocket.isOpen()) mConnected = true;
+				if (mSocket.isOpen()) isConnected(true);
 				//if(isScheduled && mSocket.isOpen()) scheduler.shutdown();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -229,7 +233,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 						}
 						Thread.sleep(5000);
 
-						if (mSocket.isOpen()) mConnected = true;
+						if (mSocket.isOpen()) isConnected(true);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					} //catch (UnknownHostException e) {
@@ -341,21 +345,26 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 	@Override
 	public void connectionOpened(NIOSocket nioSocket) {
 		mSocket = nioSocket;
-		isConnected(true);
+		//isConnected(true);
+		//connectedProperty.set(true);
 		setReconnecting(false);
 	}
 
 	private void isConnected(boolean b) {
 		mConnected = b;
+		EventBus.getBus().newConnectionEvent(b);
+		connectedProperty.set(b);
 	}
 
 	private boolean isConnected() {
-		return mConnected;
+		return connectedProperty.get();//mConnected;
+
 	}
 
 	@Override
 	public void connectionBroken(NIOSocket nioSocket, Exception exception) {
 		isConnected(false);
+		//connectedProperty.set(false);
 		if (isReconnecting()) return;
 		log.error("Disconnected");
 		reconnect();

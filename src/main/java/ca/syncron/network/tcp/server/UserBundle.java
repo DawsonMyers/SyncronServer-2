@@ -7,8 +7,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -27,12 +31,15 @@ public class UserBundle {
 	Constants.Access accessLevel = Constants.Access.USER;
 	public HashMap<String, NodeClientBundler.NodeBundle> nodes = new HashMap<>();
 
-	public SimpleStringProperty idProp     = new SimpleStringProperty("Id");
-	public SimpleStringProperty nameProp   = new SimpleStringProperty("Name");
-	public SimpleStringProperty typeProp   = new SimpleStringProperty("Type");
-	public SimpleStringProperty timeProp   = new SimpleStringProperty("Timestamp");
-	public SimpleStringProperty accessProp = new SimpleStringProperty("Access Level");
-
+	public SimpleStringProperty idProp     = new SimpleStringProperty(this, "Id", "");
+	public SimpleStringProperty nameProp   = new SimpleStringProperty(this, "Name", "");
+	public SimpleStringProperty typeProp   = new SimpleStringProperty(this, "Type", "");
+	public SimpleStringProperty timeProp   = new SimpleStringProperty(this, "Timestamp", "");
+	public SimpleStringProperty accessProp = new SimpleStringProperty(this, "Access Level", "");
+	@JsonIgnore
+	ObservableList<StringProperty> propList = FXCollections.observableArrayList();
+	boolean           initialized = false;
+	ArrayList<String> fieldNames  = new ArrayList<>();
 
 	@JsonCreator
 	public UserBundle() { }
@@ -44,7 +51,21 @@ public class UserBundle {
 		timeStamp = user.getTimeStamp();
 		accessLevel = user.getAccessLevel();
 		nodes = user.getNodes();
+
+		setIdProp(userId);
+		setNameProp(name);
+		setTypeProp(Message.UserType.getString(type));
+		setTimeProp(timeStamp.toString());
+		setAccessProp(accessLevel.getString());
+
+		propList.add(idProp);
+		propList.add(typeProp);
+		propList.add(timeProp);
+		fieldNames.add("idProp");
+		fieldNames.add("typeProp");
+		fieldNames.add("timeProp");
 	}
+
 
 //	public void init() {
 //		name = mName;
@@ -92,7 +113,9 @@ public class UserBundle {
 	}
 
 	public void setAccessLevel(Constants.Access accessLevel) {
-		accessProp.set((accessLevel = accessLevel).toString());
+		this.accessLevel = accessLevel;
+
+		accessProp.set(accessLevel.getString());
 	}
 
 	public void init(User user) {
@@ -176,6 +199,21 @@ public class UserBundle {
 		//setType(Message.UserType.getFromString(newValue));
 		setTypeProp(newValue);
 
+	}
 
+	@JsonIgnore
+	public ObservableList<StringProperty> getPropertyList() {return propList;}
+
+	@JsonIgnore
+	public UserBundle getRef() { return this;}
+
+	@JsonIgnore
+	public ArrayList<String> getFieldNames() {
+		return fieldNames;
+	}
+
+	@JsonIgnore
+	public ArrayList<String> fieldNames() {
+		return fieldNames;
 	}
 }
