@@ -29,10 +29,7 @@ public class Server extends AbstractTcpConnector {
 		AppRegistrar.register(this);
 		//	initCallbacks();
 		//registerCallbacks(callbacks);
-
-
 	}
-
 
 	public Server(boolean asServer) {
 		super(asServer);

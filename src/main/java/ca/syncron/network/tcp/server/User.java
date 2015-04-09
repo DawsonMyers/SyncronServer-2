@@ -176,10 +176,7 @@ public class User implements SocketObserver, ComConstants, SubscriptionService.S
 				}
 			}, INACTIVITY_TIMEOUT);
 		}
-
-
 		if (mDisconnectEvent != null && mName != null && mName.length() > 0 & mName.contains("node")) mDisconnectEvent.cancel();
-
 	}
 
 	// Received
@@ -359,7 +356,6 @@ public class User implements SocketObserver, ComConstants, SubscriptionService.S
 			}
 		}
 	}
-
 
 	//  must register subscription service once user registration is done (user name set)
 	@Override

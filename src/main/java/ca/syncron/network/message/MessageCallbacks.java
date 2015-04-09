@@ -1,34 +1,23 @@
-/**
- *
- */
-package ca.syncron.network.message;
 
+package ca.syncron.network.message;
 /**
  * @author Dawson
  */
 public interface MessageCallbacks {
 	public abstract void handleDigitalMessage(Message msg);
-
 	public abstract void handleAnalogMessage(Message msg);
-
 	public abstract void handleChatMessage(Message msg);
 
-	public	interface CompatCallbacks<T> {
+	public interface CompatCallbacks<T> {
 		Message.MessageType getSysMessageType();
-
 		String getSysMessage();
-
 		String getSysUserId();
 	}
 
-	public	interface QueueCallbacks {
+	public interface QueueCallbacks {
 		void handleMessage();
-
 		void processMessage(Message msg);
-
 	}
-
-
 	public interface DispatchCallbacks {
 		public abstract void handleDigitalMessage(Message msg);
 		public abstract void handleAnalogMessage(Message msg);
@@ -48,7 +37,6 @@ public interface MessageCallbacks {
 		public abstract void handleAccessMessage(Message msg);
 		public abstract void handleTargetMessage(Message msg);
 
-//
 ///////////////////////////////////////////////////////
 
 		public abstract void sendMessage(Message msg);
@@ -60,8 +48,8 @@ public interface MessageCallbacks {
 		public abstract void sendDigitalMessage(int pin, int value);
 		public abstract void sendDigitalMessage(String pin, String value);
 		public abstract void sendAnalogMessage(Message msg);
-		<T> void processMessage(T msg);
 		public abstract void sendSubscribeMessage(Message msg);
+		<T> void processMessage(T msg);
 
 		public abstract void sendUserMessage(Message msg);
 		public abstract void sendErrorMessage(Message msg);
@@ -69,8 +57,5 @@ public interface MessageCallbacks {
 		public abstract void sendUnknownMessage(Message msg);
 		public abstract void sendAccessMessage(Message msg);
 		public abstract void sendTargetMessage(Message msg);
-
 	}
-
-
 }

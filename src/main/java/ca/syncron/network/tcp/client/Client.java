@@ -32,7 +32,6 @@ public class Client extends AbstractTcpConnector {
 		//registerCallbacks(callbacks);
 	}
 
-
 	@Override
 	public void connectionOpened(NIOSocket nioSocket) {
 		super.connectionOpened(nioSocket);
@@ -52,7 +51,6 @@ public class Client extends AbstractTcpConnector {
 	public void packetSent(NIOSocket socket, Object tag) {
 		super.packetSent(socket, tag);
 	}
-
 
 	@Override
 	public void handleDigitalMessage(Message msg) {

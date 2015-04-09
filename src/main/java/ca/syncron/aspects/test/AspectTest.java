@@ -1,5 +1,6 @@
 package ca.syncron.aspects.test;
 
+import ca.syncron.aspects.MyDoBefore;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -19,6 +20,7 @@ public class AspectTest {
 //
 //	}
 //@DoBeforeAspect
+	@MyDoBefore
 	public void printBefore() {
 		log.debug("Inside printBefore");
 	}
@@ -27,6 +29,9 @@ public class AspectTest {
 //	SimpleService mSimpleServices;
 
 	public static void main(String[] args) {
+		AspectTest test = new AspectTest();
+		test.printBefore();
+
 
 //		ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring-config.xml");
 //		SimpleService simpleService = (SimpleService) context.getBean("simpleServiceBean");

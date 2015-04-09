@@ -40,18 +40,15 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 //	{}
 //
 //}
-
-
-public class AbstractTcpConnector extends Thread implements ServerSocketObserver, ComConstants,
-                                                            SocketObserver, DispatchCallbacks,
-                                                            Interfaces.PinStatus {
+public abstract class AbstractTcpConnector extends Thread implements ServerSocketObserver, ComConstants,
+                                                                     SocketObserver, DispatchCallbacks,
+                                                                     Interfaces.PinStatus {
 	static String nameId = AbstractTcpConnector.class.getName();
 	String id = getClass().getSimpleName();
-	public DispatchCallbacks callbacks;
-
+	public        DispatchCallbacks callbacks;
 	//	public Metrics.Counter receiveCounter = new Metrics.Counter();
 //	public Metrics.Counter sendCounter    = new Metrics.Counter();
-	public static String userName;
+	public static String            userName;
 	public final static Logger log = LoggerFactory.getLogger(nameId);
 	public static Handler mHandler;
 	public static volatile Map<String, User>    mUserMap    = new HashMap<String, User>();    // new
@@ -175,20 +172,8 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 		int port = Ports.getTcp();
 		//	isServer(true);
 		if (isServer()) {
-
-			// Server
-//			if (mEventMachine != null) {
-//				mEventMachine.stop();
-//			} else try {
-//				mEventMachine = new EventMachine();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//
-
 			try {
 				Thread.sleep(1000);
-
 				log.info("Attempting to connect a new server instance");
 				while (!isConnected()) {
 					count++;
@@ -205,26 +190,17 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 				e.printStackTrace();
 			} finally {
 			}
-
 		} else {    //  Client
 			String ip = Constants.IpAddresses.IP;
 			try {
 				EventMachine machine = mEventMachine;
 				InetAddress ipAddress = InetAddress.getByName(ip);
-//
-
 				log.info("Attempting to reconnect to server");
 				while (!isConnected()) {
 					count++;
 					if (mSocket.isOpen()) break;
-
 					try {
-//
 						connect();
-						//log.error("Connection attempts: " + count);
-
-						//if (count % 3 == 0) log.error("Connection attempts: " + count);
-
 						index++;
 						connect();
 						if (index >= 5) {
@@ -232,15 +208,10 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 							index = 0;
 						}
 						Thread.sleep(5000);
-
 						if (mSocket.isOpen()) isConnected(true);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
-					} //catch (UnknownHostException e) {
-//						e.printStackTrace();
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -313,6 +284,7 @@ public class AbstractTcpConnector extends Thread implements ServerSocketObserver
 			if (user.getType() != Message.UserType.NODE) user.sendBroadcast(bytesToSend);
 		}
 	}
+
 	public EventMachine getEventMachine() {
 		return mEventMachine;
 	}

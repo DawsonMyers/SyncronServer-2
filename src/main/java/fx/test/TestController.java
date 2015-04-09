@@ -5,6 +5,7 @@ import ca.syncron.network.message.Message;
 import ca.syncron.network.tcp.client.ClientController;
 import ca.syncron.network.tcp.server.UserBundle;
 import com.google.common.eventbus.Subscribe;
+import fx.arduino.PhotocellChart;
 import fx.controllers.DigitalIndicatorPane;
 import fx.eventbus.EventBus;
 import javafx.application.Platform;
@@ -56,18 +57,21 @@ public class TestController implements Initializable {
 	//mController.connectedProperty();
 	EventBus bus = EventBus.getBus();
 	public static UserBundle selectedUser;
+	PhotocellChart chart;
 
 	public TestController() {
 		bus.register(this);
+
 	}
 
+
 	ObservableList<MsgEntry> data = FXCollections.observableArrayList();
-	@FXML
-	Rectangle  conIndicator;
-	@FXML
-	Label      conLabel;
-	@FXML
-	AnchorPane controlTabAncPane;
+	@FXML AnchorPane monitorAnchorPane;
+	@FXML Rectangle  conIndicator;
+	@FXML Label      conLabel;
+	@FXML AnchorPane controlTabAncPane;
+	@FXML Button     btnStartSerial;
+	@FXML Button     btnStopSerial;
 
 	@Subscribe
 	public void connectionStatus(EventBus.ConnectionEvent e) {
@@ -96,6 +100,13 @@ public class TestController implements Initializable {
 		bus.register(this);
 		connectedProperty.bind(mController.connectedProperty());
 		Platform.runLater(() -> setConnectionStatus(mController.mConnected));
+
+		chart = new PhotocellChart();
+		chart.setResize(monitorAnchorPane);
+		monitorAnchorPane.getChildren().add(chart.get());
+
+		chart.get().prefHeightProperty().bind(monitorAnchorPane.heightProperty());
+		chart.get().prefWidthProperty().bind(monitorAnchorPane.widthProperty());
 		//conIndicator.setFill(RED1);
 		Platform.runLater(new Runnable() {
 			@Override
@@ -103,28 +114,16 @@ public class TestController implements Initializable {
 				connectedProperty.addListener(new ChangeListener<Boolean>() {
 					@Override
 					public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-
 						updateConnection(newValue);
 //						if (newValue) {
 //							conIndicator.setFill(GREEN1);
 //						} else conIndicator.setFill(RED1);
 					}
 				});
-
 			}
 		});
-
 		mClient = ClientController.getInstance();
 		userData = mClient.getUserObserver();
-//		userIdCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("userId"));
-//		msgTypeCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("type"));
-//		pinCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("pin"));
-//		valueCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("value"));
-//		chatCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("chat"));
-//
-//		// create the data
-//		userTable.setItems(data); // assign the data to the table
-//		userTable.setEditable(true);
 
 		names.addAll(
 				"Adam", "Alex", "Alfred", "Albert",
@@ -132,15 +131,6 @@ public class TestController implements Initializable {
 				"Lynne", "Myrtle", "Rose", "Rudolph",
 				"Tony", "Trudy", "Williams", "Zach"
 		            );
-//		userList.setEditable(true);
-//		for (int i = 0; i < 10; i++) {
-//			listData.add("anonym");
-//		}
-//
-//		userList.setItems(listData);
-//		userList.setCellFactory(TextFieldListCell.forListView());
-
-
 		initList();
 		initTable();
 		initUserTable(userTable1);
@@ -150,15 +140,16 @@ public class TestController implements Initializable {
 	private void initControls() {
 		AnchorPane pane = bottomAnchorPane;
 		DigitalIndicatorPane digiPane = new DigitalIndicatorPane(this);
+		digiPane.createIndicator("Digital", 12);
 		pane.getChildren().add(digiPane);
-		digiPane.setPrefWidth(pane.getPrefWidth());
-		digiPane.setPrefHeight(pane.getPrefHeight());
-		digiPane.createIndicator("Dawson");
+
+		digiPane.prefWidthProperty().bind(pane.widthProperty());
+		digiPane.prefHeightProperty().bind(pane.heightProperty());
+//		digiPane.setPrefHeight(pane.getPrefHeight());
+		//digiPane.createIndicator("Dawson");
 
 		Button btnAdd = new Button("Add");
-
-		digiPane.getChildren().add(btnAdd);
-
+		//digiPane.getChildren().add(btnAdd);
 		btnAdd.setOnAction(event -> digiPane.createIndicator("Digital"));
 	}
 
@@ -172,10 +163,6 @@ public class TestController implements Initializable {
 		entry.setChat("Hello! this is a chat msg");
 
 		itemNum++;
-//		entry.itemId.set(itemNum);
-//		entry.itemName.set("Item " + itemNum);
-//		entry.price.set("" + (1.99 + itemNum) );
-//		entry.qty.set(itemNum + 10);
 		data.add(entry);
 	}
 
@@ -194,35 +181,30 @@ public class TestController implements Initializable {
 
 	void initColumn(TableView<MsgEntry> tc) {
 
-		//userIdCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
 		userIdCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		userIdCol.setOnEditCommit(
 				t -> ((MsgEntry) t.getTableView().getItems().get(
 						t.getTablePosition().getRow())
 				).setUserId(t.getNewValue())
 		                         );
-		//msgTypeCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
 		msgTypeCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		msgTypeCol.setOnEditCommit(
 				t -> ((MsgEntry) t.getTableView().getItems().get(
 						t.getTablePosition().getRow())
 				).setMsgType(t.getNewValue())
 		                          );
-		//pinCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
 		pinCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		pinCol.setOnEditCommit(
 				t -> ((MsgEntry) t.getTableView().getItems().get(
 						t.getTablePosition().getRow())
 				).setPin(t.getNewValue())
 		                      );
-		//valueCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
 		valueCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		valueCol.setOnEditCommit(
 				t -> ((MsgEntry) t.getTableView().getItems().get(
 						t.getTablePosition().getRow())
 				).setValue(t.getNewValue())
 		                        );
-		//chatCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
 		chatCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		chatCol.setOnEditCommit(
 				t -> ((MsgEntry) t.getTableView().getItems().get(
@@ -231,18 +213,12 @@ public class TestController implements Initializable {
 		                       );
 	}
 
-	@FXML
-	TableView                       userTable1;
-	@FXML
-	TableColumn<UserBundle, String> userIdCol1;
-	@FXML
-	TableColumn<UserBundle, String> typeCol;
-	@FXML
-	TableColumn<UserBundle, String> nameCol;
-	@FXML
-	TableColumn<UserBundle, String> timestampCol;
-	@FXML
-	TableColumn<UserBundle, String> accessCol;
+	@FXML TableView                       userTable1;
+	@FXML TableColumn<UserBundle, String> userIdCol1;
+	@FXML TableColumn<UserBundle, String> typeCol;
+	@FXML TableColumn<UserBundle, String> nameCol;
+	@FXML TableColumn<UserBundle, String> timestampCol;
+	@FXML TableColumn<UserBundle, String> accessCol;
 
 	void initUserTable(TableView<UserBundle> u) {
 
@@ -253,70 +229,22 @@ public class TestController implements Initializable {
 		accessCol.setCellValueFactory(new PropertyValueFactory<UserBundle, String>("access"));
 
 
-//		//userIdCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
-//		userIdCol1.setCellFactory(TextFieldTableCell.forTableColumn());
-//		userIdCol1.setOnEditCommit(
-//				t -> ((UserBundle) t.getTableView().getItems().get(
-//						t.getTablePosition().getRow())
-//				).setUserId(t.getNewValue())
-//		                          );
-//		//msgTypeCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
-//		typeCol.setCellFactory(TextFieldTableCell.forTableColumn());
-//		typeCol.setOnEditCommit(
-//				t -> ((UserBundle) t.getTableView().getItems().get(
-//						t.getTablePosition().getRow())
-//				).setUserType(t.getNewValue())
-//		                       );
-//		//pinCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
-//		nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
-//		nameCol.setOnEditCommit(
-//				t -> ((UserBundle) t.getTableView().getItems().get(
-//						t.getTablePosition().getRow())
-//				).setName(t.getNewValue())
-//		                       );
-//		//valueCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
-//		timestampCol.setCellFactory(TextFieldTableCell.forTableColumn());
-//		timestampCol.setOnEditCommit(
-//				t -> ((UserBundle) t.getTableView().getItems().get(
-//						t.getTablePosition().getRow())
-//				).setTimeProp(t.getNewValue())
-//		                            );
-//		//chatCol.setCellValueFactory(new PropertyValueFactory<MsgEntry, String>("firstName"));
-//		accessCol.setCellFactory(TextFieldTableCell.forTableColumn());
-//		accessCol.setOnEditCommit(
-//				t -> ((UserBundle) t.getTableView().getItems().get(
-//						t.getTablePosition().getRow())
-//				).setAccessProp(t.getNewValue())
-//		                         );
-
 		// create the data
 		userTable1.setItems(userData); // assign the data to the table
 		userTable1.setEditable(true);
 	}
 
-	@FXML
-	ListView<UserBundle> userList1;
-	@FXML
-	Label                nameDet;
-	@FXML
-	Label                accessDet;
-	@FXML
-	Label                timeDet;
-	@FXML
-	Label                typeDet;
-	@FXML
-	GridPane             detailsGrid;
+	@FXML ListView<UserBundle> userList1;
+	@FXML Label                nameDet;
+	@FXML Label                accessDet;
+	@FXML Label                timeDet;
+	@FXML Label                typeDet;
+	@FXML GridPane             detailsGrid;
 
 
 	public void initList() {
-		//userList = new ListView<String>();
-//		ObservableList<String> items =FXCollections.observableArrayList (
-//				"Single", "Double", "Suite", "Family App");
-//		userList.setItems(items);
-
 
 		userList1.setItems(FXCollections.observableArrayList(userData));
-//		userList.setItems(FXCollections.observableArrayList("Item1", "Item2", "Item3", "Item4"));
 		userList1.setEditable(true);
 
 		userList.setCellFactory(TextFieldListCell.forListView());
@@ -329,175 +257,62 @@ public class TestController implements Initializable {
 			}
 
 		});
-//		userList.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-//			@Override
-//			public void handle(MouseEvent e) {
-//				UserBundle u = (UserBundle) userList.getSelectionModel().getSelectedItem();
-//				out.println("List clicked");
-//
-//				nameDet.setText(u.getName());
-//				accessDet.setText(u.getAccessProp());
-//				timeDet.setText(u.getTimeProp());
-//				typeDet.setText(u.getTypeProp());
-//			}
-//
-//		});
-//		userList.setItems(FXCollections.observableArrayList("Item1", "Item2", "Item3", "Item4"));
-////		userList.setItems(FXCollections.observableArrayList("Item1", "Item2", "Item3", "Item4"));
-//		userList.setEditable(true);
-//
-//		userList.setCellFactory(TextFieldListCell.forListView());
-//
-//		userList.setOnEditCommit(new EventHandler<ListView.EditEvent<String>>() {
-//			@Override
-//			public void handle(ListView.EditEvent<String> t) {
-//				userList.getItems().set(t.getIndex(), t.getNewValue());
-//				out.println("setOnEditCommit");
-//			}
-//
-//		});
 
-//		userList.setOnEditCancel(new EventHandler<ListView.EditEvent<String>>() {
-//			@Override
-//			public void handle(ListView.EditEvent<String> t) {
-//				out.println("setOnEditCancel");
-//			}
-//		});
+	}
 
-			}
+	@FXML public  TitledPane                    statesPane;
+	@FXML private Button                        btnSend;
+	@FXML private Button                        btnGen;
+	@FXML private Button                        btnTest;
+	@FXML private TableView<MsgEntry>           userTable;
+	@FXML private TableColumn<MsgEntry, String> userIdCol;
+	@FXML private TableColumn<MsgEntry, String> msgTypeCol;
+	@FXML private TableColumn<MsgEntry, String> pinCol;
+	@FXML private TableColumn<MsgEntry, String> valueCol;
+	@FXML private TableColumn<MsgEntry, String> chatCol;
+	@FXML private ListView                      userList;
+	@FXML private GridPane                      indicatorGrid;
+	@FXML private Label                         lblDigital0;
+	@FXML private Label                         lblDigital1;
+	@FXML private Label                         lblDigital2;
+	@FXML private Label                         lblDigital3;
+	@FXML private Label                         lblDigital4;
+	@FXML private Rectangle                     digitalIndicator0;
+	@FXML private Rectangle                     digitalIndicator1;
+	@FXML private Rectangle                     digitalIndicator2;
+	@FXML private Rectangle                     digitalIndicator3;
+	@FXML private Rectangle                     digitalIndicator4;
 
-	@FXML
-	public  TitledPane statesPane;
-	@FXML
-	private Button     btnSend;
+	@FXML private Rectangle digitalIndicator5;
+	@FXML private Rectangle digitalIndicator6;
+	@FXML private Rectangle digitalIndicator7;
+	@FXML private Rectangle digitalIndicator8;
+	@FXML private Rectangle digitalIndicator9;
+	@FXML private Label     lblDigital5;
+	@FXML private Rectangle digitalIndicator11;
+	@FXML private Rectangle digitalIndicator10;
+	@FXML private Label     lblDigital8;
+	@FXML private Label     lblDigital6;
+	@FXML private Label     lblDigital7;
+	@FXML private Label     lblDigital11;
+	@FXML private Label     lblDigital9;
+	@FXML private Label     lblDigital10;
 
-	@FXML
-	private Button btnGen;
-
-	@FXML
-	private Button btnTest;
-
-	@FXML
-	private TableView<MsgEntry> userTable;
-
-	@FXML
-	private TableColumn<MsgEntry, String> userIdCol;
-
-	@FXML
-	private TableColumn<MsgEntry, String> msgTypeCol;
-
-	@FXML
-	private TableColumn<MsgEntry, String> pinCol;
-
-	@FXML
-	private TableColumn<MsgEntry, String> valueCol;
-	@FXML
-	private TableColumn<MsgEntry, String> chatCol;
-
-	@FXML
-	private ListView userList;
-
-
-	@FXML
-	private GridPane indicatorGrid;
-
-	@FXML
-	private Label lblDigital0;
-
-	@FXML
-	private Label lblDigital1;
-
-	@FXML
-	private Label lblDigital2;
-
-	@FXML
-	private Label lblDigital3;
-
-	@FXML
-	private Label lblDigital4;
-
-	@FXML
-	private Rectangle digitalIndicator0;
-
-	@FXML
-	private Rectangle digitalIndicator1;
-
-	@FXML
-	private Rectangle digitalIndicator2;
-
-	@FXML
-	private Rectangle digitalIndicator3;
-
-	@FXML
-	private Rectangle digitalIndicator4;
-
-	@FXML
-	private Rectangle digitalIndicator5;
-
-	@FXML
-	private Rectangle digitalIndicator6;
-
-	@FXML
-	private Rectangle digitalIndicator7;
-
-	@FXML
-	private Rectangle digitalIndicator8;
-
-	@FXML
-	private Rectangle digitalIndicator9;
-
-	@FXML
-	private Label lblDigital5;
-
-	@FXML
-	private Rectangle digitalIndicator11;
-
-	@FXML
-	private Rectangle digitalIndicator10;
-
-	@FXML
-	private Label lblDigital8;
-
-	@FXML
-	private Label lblDigital6;
-
-	@FXML
-	private Label lblDigital7;
-
-	@FXML
-	private Label lblDigital11;
-
-	@FXML
-	private Label lblDigital9;
-
-	@FXML
-	private Label lblDigital10;
-
-
-	@FXML
-	void digitalClicked(MouseEvent event) {
+	@FXML void digitalClicked(MouseEvent event) {
 		out.println("Digital indicator clicked");
 	}
 
-
-	@FXML
-	void indicatorGridClicked(Event event) {
+	@FXML void indicatorGridClicked(Event event) {
 		out.println("Indicator Clicked");
 	}
 
-	@FXML
-	void genClicked(ActionEvent event) {
+	@FXML void genClicked(ActionEvent event) {
 		genNewRow();
 		out.println("Row #" + itemNum + " added");
-
 	}
 
-	@FXML
-	void sendClicked(ActionEvent event) {
-
+	@FXML void sendClicked(ActionEvent event) {
 		MsgEntry me = userTable.getSelectionModel().getSelectedItem();
-//				((MsgEntry) userTable.getSelectionModel().getTableView().getItems().get(
-//				userTable.getFocusModel().getFocusedCell().getRow()));
 		Message m = new Message();
 		m.setUserId(me.getUserId());
 		m.setMessageType(Message.MessageType.DIGITAL);
@@ -509,9 +324,15 @@ public class TestController implements Initializable {
 		ClientController.getInstance().mClient.sendMessage(m);
 	}
 
-	@FXML
-	void testClicked(ActionEvent event) {
+	@FXML void startSerialClicked(ActionEvent e) {
+		EventBus.newSerialEvent(true);
+	}
 
+	@FXML void stopSerialClicked(ActionEvent e) {
+		EventBus.newSerialEvent(false);
+	}
+
+	@FXML void testClicked(ActionEvent event) {
 	}
 
 	@FXML
@@ -519,7 +340,6 @@ public class TestController implements Initializable {
 
 	public void listClicked(Event event) {
 		out.println("List Clicked");
-
 		UserBundle u;
 		ListView<UserBundle> lv = (ListView<UserBundle>) event.getSource();
 		u = (UserBundle) lv.getSelectionModel().getSelectedItem();

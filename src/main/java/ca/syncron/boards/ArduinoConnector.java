@@ -5,6 +5,8 @@ import ca.syncron.utils.Constants;
 import ca.syncron.utils.Interfaces.PinCallbacks;
 import ca.syncron.utils.Interfaces.PinControl;
 import ca.syncron.utils.Interfaces.RawDataAccess;
+import com.google.common.eventbus.Subscribe;
+import fx.eventbus.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zu.ardulink.Link;
@@ -36,7 +38,9 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 	private int digitalPinCount = 12;
 	private int analogPinCount  = 12;
 
-	public ArduinoConnector() {}
+	EventBus bus = EventBus.getBus();
+
+	public ArduinoConnector() {bus.register(this);}
 
 	public ArduinoConnector(ClientController controller) {
 		this();
@@ -120,7 +124,6 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 			//mLock.writeLock().unlock();
 		}
 
-
 	}
 
 	@Override
@@ -170,9 +173,29 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 //		gui.setVisible(true);
 
 
-
 		ArduinoPins pins = new ArduinoPins(this, link, analogPinCount, digitalPinCount);
 
+	}
+
+	@Subscribe
+	public void onStartSerial(EventBus.SerialEvent event) {
+		link = Link.getDefaultInstance();
+		if (event.doStart()) {
+			try {
+				log.debug("Serial enabled");
+				link.connect(port);
+				Thread.sleep(2000);
+			} catch (InterruptedException | UnsatisfiedLinkError e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				log.debug("Serial disabled");
+				link.disconnect();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	public static String getAnalogString() {
@@ -243,7 +266,7 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 		public volatile AnalogPin[]  mAnalogPins;
 		public volatile DigitalPin[] mDigitalPins;
 		PinCallbacks mObserver;
-		Link                    mLink;
+		Link mLink;
 
 		public ArduinoPins(PinCallbacks observer, Link link, int analogPins, int digitalPins) {
 			for (int i = 0; i < analogPins; i++) {
@@ -342,7 +365,6 @@ public class ArduinoConnector extends Thread implements PinCallbacks, RawDataAcc
 						currentValue = e.getValue();
 						mObserver.digitalPinChanged(e.getPin(), e.getValue());
 					}
-
 				});
 				sePinValue(0);
 				//	mLink.startListenDigitalPin(pin);

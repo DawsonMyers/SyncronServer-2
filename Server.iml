@@ -23,7 +23,6 @@
         <sourceRoots>
           <root url="file://$MODULE_DIR$/gen" />
           <root url="file://$MODULE_DIR$/resourses" />
-          <root url="file://$MODULE_DIR$/src" />
         </sourceRoots>
       </configuration>
     </facet>
@@ -44,6 +43,7 @@
     <orderEntry type="library" exported="" name="ArdulinkNewLinux" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ArdulinkNewWin" level="application" />
     <orderEntry type="library" exported="" name="Spring-4.1.6.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="jssc" level="application" />
     <orderEntry type="library" name="Maven: com.codesnippets4all:quick-json:1.0.4" level="project" />
     <orderEntry type="library" name="Maven: com.jcabi:jcabi-aspects:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.jcabi:jcabi-log:0.15" level="project" />
@@ -57,7 +57,6 @@
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.10" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.1.2" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.2" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.codehaus.groovy:groovy:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.inject:guice:3.0" level="project" />
     <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
     <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />

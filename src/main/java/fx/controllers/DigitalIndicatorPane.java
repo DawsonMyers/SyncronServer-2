@@ -11,6 +11,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -54,6 +55,10 @@ public class DigitalIndicatorPane extends FlowPane /*implements Initializable*/ 
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlLocation));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
+		setAlignment(Pos.CENTER);
+
+		//bindDimensions(aPane);
+		setPadding(new Insets(10, 10, 10, 10));
 
 		try {
 			fxmlLoader.load();
@@ -107,6 +112,12 @@ public class DigitalIndicatorPane extends FlowPane /*implements Initializable*/ 
 		if (flowPane == null) initPane();
 		getChildren().add(indicator);
 		out.println("Indicator #" + list.size() + " added to panel");
+	}
+
+	public void createIndicator(String base, int count) {
+		for (int i = 0; i < count; i++) {
+			createIndicator(base);
+		}
 	}
 
 	private void initPane() {

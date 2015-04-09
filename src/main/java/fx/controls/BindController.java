@@ -49,7 +49,6 @@ public class BindController implements Initializable {
 	static ClientController mClient;
 
 	private static AbstractController mController = AbstractController.getInstance();
-	//public static  SimpleBooleanProperty connectedProperty = mController.connectedProperty();
 	EventBus bus = EventBus.getBus();
 	public static UserBundle selectedUser1;
 

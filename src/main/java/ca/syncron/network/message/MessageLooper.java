@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package ca.syncron.network.message;
 
 
@@ -20,9 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class MessageLooper {
 	public final static Logger log = LoggerFactory.getLogger(MessageLooper.class.getName());
-
 	DispatchCallbacks mObserver = null;
-
 	MessageLooper me;
 	ExecutorService              executor      = Executors.newFixedThreadPool(2);
 	LinkedBlockingQueue<Message> mReceiveQueue = new LinkedBlockingQueue<>();
@@ -45,21 +41,19 @@ public class MessageLooper {
 	public MessageLooper(DispatchCallbacks observer) {
 		this();
 		mObserver = observer;
-		//mMode = mode;
 	}
 
 	public void register(DispatchCallbacks observer) {mObserver = observer;}
 
 	public synchronized void addToReceiveQue(Message msg) {
-		//out.println("");
 		log.info("addToReceiveQue");
 		mReceiveQueue.add(msg);
-		log.info("ReceiverQue", "Message added to queue");
+		log.info("Message added to queue");
 	}
 
 	public synchronized void addToSendQue(Message msg) {
 		mSendQueue.add(msg);
-		log.info("\"SendQue\", \"Message added to queue\"");
+		log.info("Message added to queue");
 
 	}
 
@@ -74,14 +68,14 @@ public class MessageLooper {
 	}
 
 	void startLooper() {
-		if (!looperStarted){
-		looperStarted = true;
+		if (!looperStarted) {
+			looperStarted = true;
 			executor.execute(() -> {
 				log.info("ReceiverQue", "Receiving queue started");
 				looperStarted = true;
 				//log.info("\"ReceiverQue\", \"Receiving queue started\"");
 				while (true) {
-					try {
+					try {// Blocks when there's no messages
 						dispatchReceiveMessage(mReceiveQueue.take());
 //					log.info("ReceiverQue, message taken from Receiving queue ");
 					} catch (InterruptedException e) {
@@ -90,7 +84,6 @@ public class MessageLooper {
 				}
 			});
 			executor.execute(() -> {
-				log.info("\"SenderQue\", \"Sender queue started\"");
 				log.info("SenderQue", "Sender queue started");
 				while (true) {
 					try {
@@ -111,72 +104,71 @@ public class MessageLooper {
 		if (msg.getIsTargeted()) type = MessageType.TARGET;
 		if (type == null) type = MessageType.UNKNOWN;
 		log.info("Dispatching " + type + " message");
-		//log.debug("dispatchReceiveMessage", "Dispatching message");
-			switch (type) {
-				case DIGITAL:
-					mObserver.handleDigitalMessage(msg);
-					break;
-				case ANALOG:
-					mObserver.handleAnalogMessage(msg);
-					break;
-				case ADMIN:
-					mObserver.handleAdminMessage(msg);
-					break;
-				case UPDATE:
-					mObserver.handleUpdateMessage(msg);
-					break;
-				case REGISTER:
-					log.info("dispatching Register message");
-					mObserver.handleRegisterMessage(msg);
-					break;
-				case STATUS:
-					mObserver.handleStatusMessage(msg);
-					break;
-				case LOGIN:
-					mObserver.handleLoginMessage(msg);
-					break;
-				case USER:
-					mObserver.handleUserMessage(msg);
-					break;
-				case CHAT:
-					log.info("dispatching Chat message");
-					mObserver.handleChatMessage(msg);
-					break;
-				case STREAM:
-					log.info("dispatching Stream message");
-					mObserver.handleStreamMessage(msg);
-					break;
-				//
-				///////////////////////////////////////////////////////
-				case QUERY:
-					log.info("dispatching Query message");
-					mObserver.handleQueryMessage(msg);
-					break;
-				case ERROR:
-					log.info("dispatching Error message");
-					mObserver.handleErrorMessage(msg);
-					break;
-				case UNKNOWN:
-					log.info("dispatching Unknown message");
-					mObserver.handleUnknownMessage(msg);
-					break;
-				case ACCESS:
-					log.info("dispatching Access message");
-					mObserver.handleAccessMessage(msg);
-					break;
-				case TARGET:
-					log.info("dispatching Target message");
-					mObserver.handleTargetMessage(msg);
-					break;
-				case SUBSCRIBE:
-					log.info("dispatching Subcribe message");
-					mObserver.handleSubscribeMessage(msg);
-					break;
-				default:
-					log.error("dispatchReceiveMessage", "message could not be identified");
-					break;
-			}
-	//	});
+		switch (type) {
+			case DIGITAL:
+				mObserver.handleDigitalMessage(msg);
+				break;
+			case ANALOG:
+				mObserver.handleAnalogMessage(msg);
+				break;
+			case ADMIN:
+				mObserver.handleAdminMessage(msg);
+				break;
+			case UPDATE:
+				mObserver.handleUpdateMessage(msg);
+				break;
+			case REGISTER:
+				log.info("dispatching Register message");
+				mObserver.handleRegisterMessage(msg);
+				break;
+			case STATUS:
+				mObserver.handleStatusMessage(msg);
+				break;
+			case LOGIN:
+				mObserver.handleLoginMessage(msg);
+				break;
+			case USER:
+				mObserver.handleUserMessage(msg);
+				break;
+			case CHAT:
+				log.info("dispatching Chat message");
+				mObserver.handleChatMessage(msg);
+				break;
+			case STREAM:
+				log.info("dispatching Stream message");
+				mObserver.handleStreamMessage(msg);
+				break;
+			//
+			///////////////////////////////////////////////////////
+			case QUERY:
+				log.info("dispatching Query message");
+				mObserver.handleQueryMessage(msg);
+				break;
+			case ERROR:
+				log.info("dispatching Error message");
+				mObserver.handleErrorMessage(msg);
+				break;
+			case UNKNOWN:
+				log.info("dispatching Unknown message");
+				mObserver.handleUnknownMessage(msg);
+				break;
+			case ACCESS:
+				log.info("dispatching Access message");
+				mObserver.handleAccessMessage(msg);
+				break;
+			case TARGET:
+				log.info("dispatching Target message");
+				mObserver.handleTargetMessage(msg);
+				break;
+			case SUBSCRIBE:
+				log.info("dispatching Subcribe message");
+				mObserver.handleSubscribeMessage(msg);
+				break;
+			default:
+				log.error("dispatchReceiveMessage", "message could not be identified");
+				break;
+		}
+		//	});
 	}
 
 	public void dispatchSendMessage(Message msg) {
